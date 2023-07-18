@@ -37,7 +37,7 @@ const getPage = async (url, email) => {
 		console.log({ numberCoupons, doctorName });
 		mailer(email, { numberCoupons, doctorName });
 	} else {
-		setTimeout(() => getPage(url), 1000 * 60);
+		setTimeout(() => getPage(url, email), 1000 * 60);
 	}
 };
 
