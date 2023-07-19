@@ -11,12 +11,37 @@
 				<form class="content__form">
 					<div class="content__wrapper">
 						<div class="content__input">
-							<input id="email" type="email" />
-							<label for=""></label>
+							<input placeholder="example@yandex.ru" name="email" id="email" type="email" />
+							<label for="email">адрес вашей электронной почты</label>
 						</div>
 						<div class="content__input">
-							<input id="url" type="text" />
-							<label for="url"></label>
+							<input
+								placeholder="https://registratura196.ru/DayInfo?CityId=city36&OrgId=13003729&DepId=99560003239&ServId=Фельдшер%20участковый&DocId=63013"
+								name="url"
+								id="url"
+								type="text"
+							/>
+							<label for="url">url адрес врача</label>
+						</div>
+					</div>
+					<div class="content__loader">
+						<div class="content__loader-gif">
+							<img src="./assets/gif/loading.gif" alt="загрузка" />
+						</div>
+						<div class="content__loader-message"></div>
+					</div>
+					<div class="content__success">
+						<div class="content__success-img">
+							<img src="./assets/icons/success.png" alt="успешно" />
+						</div>
+						<div class="content__success-message">задача создана!</div>
+					</div>
+					<div class="content__error">
+						<div class="content__error-img">
+							<img src="./assets/icons/error.png" alt="успешно" />
+						</div>
+						<div class="content__error-message">
+							произошла ошибка, попробуйте еще раз чуть позже
 						</div>
 					</div>
 					<button class="content__button">отправить</button>
