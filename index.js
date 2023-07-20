@@ -2,6 +2,8 @@ const puppeteer = require('puppeteer');
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
+const cron = require('node-cron');
+const fetch = require('node-fetch');
 
 const getPage = async (url, email) => {
 	let numberCoupons = 0;
@@ -22,23 +24,30 @@ const getPage = async (url, email) => {
 			doctorName = res[res.length - 1];
 		});
 
-	const html = await page.content();
-	const regexp = new RegExp(/(Талонов:.{2})/, 'g');
-	const arrCoupons = html.match(regexp).map((item) => item.slice(-1));
+	const getCoupons = async () => {
+		const html = await page.content();
+		const regexp = new RegExp(/(Талонов:.{2})/, 'g');
+		const arrCoupons = html.match(regexp).map((item) => item.slice(-1));
 
-	for (let item of arrCoupons) {
-		if (item > 0) {
-			numberCoupons += +item;
+		for (let item of arrCoupons) {
+			if (item > 0) {
+				numberCoupons += +item;
+			}
 		}
-	}
-	await browser.close();
 
-	if (numberCoupons) {
-		console.log({ numberCoupons, doctorName });
-		mailer(email, { numberCoupons, doctorName });
-	} else {
-		setTimeout(() => getPage(url, email), 1000 * 60);
-	}
+		if (numberCoupons) {
+			await browser.close();
+			console.log({ numberCoupons, doctorName });
+			mailer(email, { numberCoupons, doctorName });
+		} else {
+			setTimeout(async () => {
+				await page.reload();
+				getCoupons(), 1000 * 60;
+			});
+		}
+	};
+
+	getCoupons();
 };
 
 const mailer = async (email, data) => {
@@ -67,7 +76,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post('/addTask', async ({ body }, res) => {
+app.post('/api/addTask', async ({ body }, res) => {
 	const { email, url } = body;
 	try {
 		getPage(url, email);
@@ -79,4 +88,11 @@ app.post('/addTask', async ({ body }, res) => {
 
 app.listen(port, () => {
 	console.log('Сервер запущен!');
+});
+
+cron.schedule('*/14 * * * *', () => {
+	fetch('https://doctor-sappointment.onrender.com', {
+		method: 'GET',
+	});
+	console.log('прошло 14 минут!');
 });
