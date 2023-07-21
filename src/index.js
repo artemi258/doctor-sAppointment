@@ -1,7 +1,6 @@
 const puppeteer = require('puppeteer');
-const express = require('express');
 const nodemailer = require('nodemailer');
-const cors = require('cors');
+const { server } = require('./app');
 
 const getPage = async (url, email) => {
 	let numberCoupons = 0;
@@ -10,17 +9,14 @@ const getPage = async (url, email) => {
 	const page = await browser.newPage();
 
 	await page.goto(url);
-
-	await page
-		.evaluate(() => {
-			const arr = Array.from(document.querySelectorAll('.text-primary.loader-link')).map(
-				(el) => el.textContent
-			);
-			return arr;
-		})
-		.then((res) => {
-			doctorName = res[res.length - 1];
-		});
+	console.log(url);
+	await page.evaluate(() => {
+		// const arr = document.querySelectorAll('.text-primary.loader-link');
+		// const name = arr[arr.length - 1].textContent;
+		// console.log('name', arr);
+		console.log('name');
+		doctorName = name;
+	});
 
 	const html = await page.content();
 	const regexp = new RegExp(/(Талонов:.{2})/, 'g');
@@ -33,11 +29,11 @@ const getPage = async (url, email) => {
 	}
 	await browser.close();
 
+	console.log({ numberCoupons, doctorName });
 	if (numberCoupons) {
-		console.log({ numberCoupons, doctorName });
-		mailer(email, { numberCoupons, doctorName });
+		// mailer(email, { numberCoupons, doctorName });
 	} else {
-		setTimeout(() => getPage(url, email), 1000 * 60);
+		// setTimeout(() => getPage(url, email), 1000 * 60);
 	}
 };
 
@@ -61,11 +57,7 @@ const mailer = async (email, data) => {
 	});
 };
 
-const port = process.env.PORT || 5000;
-const app = express();
-
-app.use(cors());
-app.use(express.json());
+const app = server();
 
 app.post('/addTask', async ({ body }, res) => {
 	const { email, url } = body;
@@ -75,8 +67,4 @@ app.post('/addTask', async ({ body }, res) => {
 	} catch (error) {
 		res.status(404).send('ошибка');
 	}
-});
-
-app.listen(port, () => {
-	console.log('Сервер запущен!');
 });
