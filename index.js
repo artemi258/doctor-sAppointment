@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
-const cron = require('node-cron');
+// const cron = require('node-cron');
 const fetch = require('node-fetch');
 
 const getPage = async (url, email) => {
@@ -90,9 +90,16 @@ app.listen(port, () => {
 	console.log('Сервер запущен!');
 });
 
-cron.schedule('*/14 * * * *', () => {
+setInterval(() => {
 	fetch('https://doctor-sappointment.onrender.com', {
 		method: 'GET',
 	});
 	console.log('прошло 14 минут!');
-});
+}, 1000 * 60 * 14);
+
+// cron.schedule('*/14 * * * *', () => {
+// 	fetch('https://doctor-sappointment.onrender.com', {
+// 		method: 'GET',
+// 	});
+// 	console.log('прошло 14 минут!');
+// });
