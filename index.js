@@ -2,7 +2,6 @@ const puppeteer = require('puppeteer');
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
-// const cron = require('node-cron');
 const fetch = require('node-fetch');
 
 const getPage = async (url, email) => {
@@ -10,8 +9,7 @@ const getPage = async (url, email) => {
 	let doctorName = '';
 	const browser = await puppeteer.launch();
 	const page = await browser.newPage();
-
-	await page.goto(url);
+	await page.goto(url, { timeout: 0 });
 
 	await page
 		.evaluate(() => {
@@ -41,7 +39,8 @@ const getPage = async (url, email) => {
 			mailer(email, { numberCoupons, doctorName });
 		} else {
 			setTimeout(async () => {
-				await page.reload();
+				await page.reload({ timeout: 0 });
+				console.log('Страница обновлена!');
 				getCoupons(), 1000 * 60;
 			});
 		}
@@ -96,10 +95,3 @@ setInterval(() => {
 	});
 	console.log('прошло 14 минут!');
 }, 1000 * 60 * 14);
-
-// cron.schedule('*/14 * * * *', () => {
-// 	fetch('https://doctor-sappointment.onrender.com', {
-// 		method: 'GET',
-// 	});
-// 	console.log('прошло 14 минут!');
-// });
