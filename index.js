@@ -40,7 +40,7 @@ const getPage = async (url, email) => {
 		} else {
 			setTimeout(async () => {
 				await page.reload({ timeout: 0 });
-				console.log('Страница обновлена!');
+				console.log(`Врач: ${doctorName} Страница обновлена!`);
 				getCoupons();
 			}, 1000 * 60);
 		}
