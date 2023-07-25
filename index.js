@@ -41,8 +41,8 @@ const getPage = async (url, email) => {
 			setTimeout(async () => {
 				await page.reload({ timeout: 0 });
 				console.log('Страница обновлена!');
-				getCoupons(), 1000 * 60;
-			});
+				getCoupons();
+			}, 1000 * 60);
 		}
 	};
 
