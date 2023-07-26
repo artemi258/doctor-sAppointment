@@ -21,7 +21,7 @@ export function submittingForm() {
 			setTimeout(() => {
 				loadingMessage.textContent = 'почти добежал...';
 			}, 5000);
-			fetch('https://doctor-sappointment.onrender.com/addTask', {
+			fetch('https://doctor-sappointment.onrender.com/api/addTask', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(obj),
