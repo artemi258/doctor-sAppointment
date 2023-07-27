@@ -6,47 +6,69 @@
 		<title>Запись к врачу</title>
 	</head>
 	<body>
-		<main class="container">
-			<div class="content">
-				<form class="content__form">
-					<div class="content__wrapper">
-						<div class="content__input">
-							<input placeholder="example@yandex.ru" name="email" id="email" type="email" />
-							<label for="email">адрес вашей электронной почты</label>
-						</div>
-						<div class="content__input">
-							<input
-								placeholder="https://registratura196.ru/DayInfo?CityId=city36&OrgId=13003729&DepId=99560003239&ServId=Фельдшер%20участковый&DocId=63013"
-								name="url"
-								id="url"
-								type="text"
-							/>
-							<label for="url">url адрес врача</label>
+		<main class="content">
+			<form class="content__form">
+				<div class="content__wrapper">
+					<div class="content__input">
+						<input placeholder="example@yandex.ru" name="email" id="email" type="email" />
+						<label for="email">адрес вашей электронной почты</label>
+					</div>
+					<div class="content__input">
+						<input
+							placeholder="https://registratura196.ru/DayInfo?CityId=city36&OrgId=13003729&DepId=99560003239&ServId=Фельдшер%20участковый&DocId=63013"
+							name="url"
+							id="url"
+							type="text"
+						/>
+						<label for="url">url адрес врача</label>
+						<div class="content__input-tooltipUrl">
+							<div class="content__input-tooltipUrl_img">
+								<img src="./assets/img/url.png" alt="сайт с url адресом" />
+							</div>
+							<p class="content__input-tooltipUrl_desc">
+								Зайдите на страницу нужного вам доктора и скопируйте его url адрес.
+							</p>
 						</div>
 					</div>
-					<div class="content__loader">
-						<div class="content__loader-gif">
-							<img src="./assets/gif/loading.gif" alt="загрузка" />
-						</div>
-						<div class="content__loader-message"></div>
-					</div>
-					<div class="content__success">
-						<div class="content__success-img">
-							<img src="./assets/icons/success.png" alt="успешно" />
-						</div>
-						<div class="content__success-message">задача создана!</div>
-					</div>
-					<div class="content__error">
-						<div class="content__error-img">
-							<img src="./assets/icons/error.png" alt="успешно" />
-						</div>
-						<div class="content__error-message">
-							произошла ошибка, попробуйте еще раз чуть позже
+					<div class="content__check">
+						<div class="content__check-text">Проверять наличие талонов один раз в:</div>
+						<div class="content__check-wrap">
+							<label tabindex="0" for="one"
+								><input value="60" name="check" type="radio" id="one" /> 1 минуту</label
+							>
+							<label tabindex="0" for="five"
+								><input value="300" name="check" type="radio" id="five" /> 5 минут</label
+							>
+							<label tabindex="0" for="fifteen"
+								><input value="900" name="check" type="radio" id="fifteen" /> 15 минут</label
+							>
+							<label tabindex="0" for="thirty"
+								><input tabindex="-1" value="1800" checked name="check" type="radio" id="thirty" />
+								30 минут</label
+							>
 						</div>
 					</div>
-					<button class="content__button">отправить</button>
-				</form>
-			</div>
+				</div>
+				<div class="content__loader">
+					<div class="content__loader-gif">
+						<img src="./assets/gif/loading.gif" alt="загрузка" />
+					</div>
+					<div class="content__loader-message"></div>
+				</div>
+				<div class="content__success">
+					<div class="content__success-img">
+						<img src="./assets/icons/success.png" alt="успешно" />
+					</div>
+					<div class="content__success-message">задача создана!</div>
+				</div>
+				<div class="content__error">
+					<div class="content__error-img">
+						<img src="./assets/icons/error.png" alt="успешно" />
+					</div>
+					<div class="content__error-message">произошла ошибка, попробуйте еще раз чуть позже</div>
+				</div>
+				<button class="content__button">создать</button>
+			</form>
 		</main>
 	</body>
 </html>

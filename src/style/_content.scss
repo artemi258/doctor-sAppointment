@@ -1,6 +1,13 @@
 .content {
-	width: 500px;
-	margin: 0 auto;
+	width: 450px;
+	position: absolute;
+	left: 25%;
+	top: 30%;
+	transform: translate(-50%, -50%);
+	border: 1px #4676d7 solid;
+	border-radius: 10px;
+	box-shadow: 5px 5px 10px black;
+	padding: 30px 20px;
 	&__wrapper {
 		width: 100%;
 	}
@@ -14,13 +21,14 @@
 		position: relative;
 		width: 100%;
 		&:not(:first-child) {
-			margin-top: 25px;
+			margin-top: 30px;
 		}
 		input {
 			border-radius: 8px;
 			width: 100%;
-			height: 40px;
+			height: 50px;
 			padding: 5px 10px;
+			border: 1px #4676d7 solid;
 			&:focus-visible {
 				outline: none;
 				border: 2px #4676d7 solid;
@@ -30,11 +38,75 @@
 				color: #9e9e9e;
 			}
 		}
+		&:focus-within .content__input-tooltipUrl {
+			visibility: visible;
+			opacity: 1;
+		}
 		label {
 			position: absolute;
-			left: 0;
-			top: -50%;
-			color: #fff;
+			left: 20px;
+			top: -35%;
+			font-size: 20px;
+			color: #4676d7;
+			padding: 5px 5px;
+			background-color: #fff;
+		}
+		&-tooltipUrl {
+			visibility: hidden;
+			position: absolute;
+			opacity: 0;
+			right: -110%;
+			top: 0;
+			width: 400px;
+			border: 1px #4676d7 solid;
+			border-radius: 10px;
+			padding: 10px 10px;
+			transition: all 0.3s linear;
+			&::after {
+				content: '';
+				position: absolute;
+				top: 10px; /* At the bottom of the tooltip */
+				left: -29px;
+				border-width: 14px;
+				border-style: solid;
+				border-color: transparent #4676d7 transparent transparent;
+			}
+			&_img {
+				width: 100%;
+				height: 250px;
+				img {
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
+				}
+			}
+			&_desc {
+				font-size: 20px;
+			}
+		}
+	}
+	&__check {
+		margin-top: 20px;
+		&-text {
+			font-size: 20px;
+			color: #4676d7;
+		}
+		&-wrap {
+			margin-top: 10px;
+			display: flex;
+			justify-content: space-between;
+			label {
+				color: #4676d7;
+				font-size: 16px;
+				cursor: pointer;
+				&:focus-visible {
+					outline: none;
+					border-bottom: 1px #4676d7 solid;
+				}
+			}
+			input {
+				cursor: pointer;
+			}
 		}
 	}
 	&__loader {
@@ -51,7 +123,7 @@
 			}
 		}
 		&-message {
-			color: #fff;
+			color: #4676d7;
 		}
 	}
 	&__success {
@@ -92,12 +164,19 @@
 	&__button {
 		border: 0;
 		border-radius: 5px;
-		background: #4676d7;
+		background-color: #4676d7;
 		width: 30%;
 		color: #fff;
 		padding: 8px 16px;
 		font-size: 16px;
-		margin-top: 10px;
+		margin-top: 20px;
+		box-shadow: 2px 2px 7px black;
 		cursor: pointer;
+		&:hover {
+			background-color: #4f70b3;
+		}
+		&:active {
+			box-shadow: 1px 1px 3px black;
+		}
 	}
 }

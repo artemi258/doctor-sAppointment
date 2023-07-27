@@ -1,18 +1,11 @@
 @import 'normalize.css';
 @import './content';
 
-.container {
-	width: 1140px;
-	margin: 0 auto;
-	padding: 100px 0;
-}
 * {
 	box-sizing: border-box;
 }
 body {
-	background: url('../assets/img/background.jpg') center center / cover no-repeat;
-	background-color: rgba(0, 0, 0, 0.5);
-	background-blend-mode: multiply;
+	position: relative;
 	width: 100vw;
 	height: 100vh;
 }

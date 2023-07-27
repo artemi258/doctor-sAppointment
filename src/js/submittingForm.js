@@ -13,36 +13,36 @@ export function submittingForm() {
 
 		const formData = new FormData(form);
 
-		const obj = {
-			email: formData.get('email'),
-			url: formData.get('url'),
-		};
-		new Promise((res, rej) => {
-			setTimeout(() => {
-				loadingMessage.textContent = 'почти добежал...';
-			}, 5000);
-			fetch('https://doctor-sappointment.onrender.com/api/addTask', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(obj),
-			}).then((result) => res(result));
-		})
-			.then(() => {
-				loading.style.display = 'none';
-				success.style.display = 'flex';
-				form.reset();
-			})
-			.catch((err) => {
-				loading.style.display = 'none';
-				error.style.display = 'flex';
-				console.log(err);
-			})
-			.finally(() => {
-				setTimeout(() => {
-					error.style.display = 'none';
-					success.style.display = 'none';
-				}, 5000);
-			});
+		// const obj = {
+		// 	email: formData.get('email'),
+		// 	url: formData.get('url'),
+		// };
+		// new Promise((res, rej) => {
+		// 	setTimeout(() => {
+		// 		loadingMessage.textContent = 'почти добежал...';
+		// 	}, 5000);
+		// 	fetch('https://doctor-sappointment.onrender.com/api/addTask', {
+		// 		method: 'POST',
+		// 		headers: { 'Content-Type': 'application/json' },
+		// 		body: JSON.stringify(obj),
+		// 	}).then((result) => res(result));
+		// })
+		// 	.then(() => {
+		// 		loading.style.display = 'none';
+		// 		success.style.display = 'flex';
+		// 		form.reset();
+		// 	})
+		// 	.catch((err) => {
+		// 		loading.style.display = 'none';
+		// 		error.style.display = 'flex';
+		// 		console.log(err);
+		// 	})
+		// 	.finally(() => {
+		// 		setTimeout(() => {
+		// 			error.style.display = 'none';
+		// 			success.style.display = 'none';
+		// 		}, 5000);
+		// 	});
 	};
 
 	form.addEventListener('submit', submit);
