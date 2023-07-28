@@ -32,8 +32,15 @@ export class TasksController extends BaseController implements ITasksController 
 		res: Response,
 		next: NextFunction
 	): void => {
-		this.tasksService.createTaskNearestTicket(body);
-		this.loggerService.log('задача создана');
-		this.created(res);
+		this.tasksService
+			.createTaskNearestTicket(body)
+			.then(() => {
+				this.loggerService.log(`${body.email} задача создана`);
+				this.created(res);
+			})
+			.catch((err) => {
+				this.loggerService.error(err);
+				res.status(500).send('ошибка создания задачи');
+			});
 	};
 }
