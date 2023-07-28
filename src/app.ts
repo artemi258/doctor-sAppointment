@@ -6,7 +6,6 @@ import cors from 'cors';
 import { Server } from 'http';
 import { TYPES } from '../types';
 import { ILogger } from './logger/logger.interface';
-import { ITasksController } from './tasks/tasks.controller.interface';
 
 @injectable()
 export class App {
