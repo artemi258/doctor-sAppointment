@@ -2,14 +2,13 @@ import { inject, injectable } from 'inversify';
 import puppeteer, { Browser, Page } from 'puppeteer';
 import { TaskNearestTicketDto } from './dto/task-taskNearestTicket.dto';
 import { ITasksService } from './tasks.service.interface';
-import { sendMail } from '../utils/sendEmail';
-import { TYPES } from '../../types';
+import { TYPES } from '../types';
 import { ILogger } from '../logger/logger.interface';
 import { getCoupons } from '../utils/getCoupons';
 
 @injectable()
 export class TasksService implements ITasksService {
-	constructor(@inject(TYPES.ILogger) private logger: ILogger) {}
+	constructor(@inject(TYPES.Logger) private logger: ILogger) {}
 
 	createTaskNearestTicket = async ({ email, url }: TaskNearestTicketDto): Promise<boolean> => {
 		try {
@@ -27,7 +26,7 @@ export class TasksService implements ITasksService {
 					}
 				})) ?? '';
 
-			getCoupons(page, browser, doctorName, this.logger);
+			getCoupons(page, browser, doctorName, email, this.logger);
 
 			return true;
 		} catch (error) {

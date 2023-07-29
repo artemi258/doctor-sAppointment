@@ -1,5 +1,5 @@
 import { Container, ContainerModule, interfaces } from 'inversify';
-import { TYPES } from '../types';
+import { TYPES } from './types';
 import { App } from './app';
 import { ILogger } from './logger/logger.interface';
 import { LoggerService } from './logger/logger.service';
@@ -10,9 +10,9 @@ import { TasksService } from './tasks/tasks.service';
 
 export const appBinding = new ContainerModule((bind: interfaces.Bind) => {
 	bind<App>(TYPES.Application).to(App);
-	bind<ILogger>(TYPES.ILogger).to(LoggerService).inSingletonScope();
-	bind<ITasksController>(TYPES.ITasksController).to(TasksController).inSingletonScope();
-	bind<ITasksService>(TYPES.ITasksService).to(TasksService).inSingletonScope();
+	bind<ILogger>(TYPES.Logger).to(LoggerService).inSingletonScope();
+	bind<ITasksController>(TYPES.TasksController).to(TasksController).inSingletonScope();
+	bind<ITasksService>(TYPES.TasksService).to(TasksService).inSingletonScope();
 });
 
 const bootstrap = () => {

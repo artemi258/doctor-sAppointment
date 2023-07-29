@@ -1,7 +1,7 @@
 import { inject } from 'inversify';
 import { BaseController } from '../common/base.controller';
 import { ITasksController } from './tasks.controller.interface';
-import { TYPES } from '../../types';
+import { TYPES } from '../types';
 import { ILogger } from '../logger/logger.interface';
 import { IControllerRoute } from '../common/route.interface';
 import { Request, Response, NextFunction } from 'express';
@@ -10,8 +10,8 @@ import { ITasksService } from './tasks.service.interface';
 
 export class TasksController extends BaseController implements ITasksController {
 	constructor(
-		@inject(TYPES.ILogger) private loggerService: ILogger,
-		@inject(TYPES.ITasksService) private tasksService: ITasksService
+		@inject(TYPES.Logger) private loggerService: ILogger,
+		@inject(TYPES.TasksService) private tasksService: ITasksService
 	) {
 		super(loggerService);
 		this.bindRoutes(this.tasksRouter);
@@ -20,7 +20,7 @@ export class TasksController extends BaseController implements ITasksController 
 	get tasksRouter(): IControllerRoute[] {
 		return [
 			{
-				path: '/taskNearestTicket',
+				path: '/tasks/taskNearestTicket',
 				func: this.taskNearestTicket,
 				method: 'post',
 			},

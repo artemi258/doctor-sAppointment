@@ -4,7 +4,7 @@ import { inject, injectable } from 'inversify';
 import express, { Express } from 'express';
 import cors from 'cors';
 import { Server } from 'http';
-import { TYPES } from '../types';
+import { TYPES } from './types';
 import { ILogger } from './logger/logger.interface';
 
 @injectable()
@@ -14,8 +14,8 @@ export class App {
 	port: number;
 
 	constructor(
-		@inject(TYPES.ILogger) private logger: ILogger,
-		@inject(TYPES.ITasksController) private tasksController: TasksController
+		@inject(TYPES.Logger) private logger: ILogger,
+		@inject(TYPES.TasksController) private tasksController: TasksController
 	) {
 		this.app = express();
 		this.port = 8000;
@@ -27,7 +27,7 @@ export class App {
 	};
 
 	useRoutes = (): void => {
-		this.app.use('/tasks', this.tasksController.router);
+		this.app.use('/api', this.tasksController.router);
 	};
 
 	useExeptionFilters = (): void => {};

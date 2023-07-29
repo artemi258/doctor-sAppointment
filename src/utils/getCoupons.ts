@@ -1,11 +1,13 @@
 import { Browser, Page } from 'puppeteer';
 import { getDates } from './getDates';
 import { ILogger } from '../logger/logger.interface';
+import { sendMail } from './sendEmail';
 
 export const getCoupons = async (
 	page: Page,
 	browser: Browser,
 	doctorName: string,
+	email: string,
 	logger: ILogger
 ): Promise<string[] | void> => {
 	let numberCoupons: number = 0;
@@ -39,17 +41,19 @@ export const getCoupons = async (
 
 	date.length = 21;
 
-	if (arrTitle.length) {
+	arrTitle.forEach((item) => {
+		const num = +item.slice(-1);
+		if (num) numberCoupons += num;
+	});
+
+	if (numberCoupons) {
 		await browser.close();
-		arrTitle.forEach((item) => {
-			numberCoupons += +item.slice(-1);
-		});
 		logger.log(`Талонов: ${numberCoupons}, Доктор: ${doctorName}`);
-		// sendMail(email, { numberCoupons, doctorName });
+		sendMail(email, { numberCoupons, doctorName });
 	} else {
 		setTimeout(async () => {
 			await page.reload();
-			getCoupons(page, browser, doctorName, logger);
+			getCoupons(page, browser, doctorName, email, logger);
 		}, 1000 * 60);
 	}
 };
