@@ -1,5 +1,6 @@
 import '../style/style.scss';
 import { submittingForm } from './submittingForm';
+import { validate } from './validate';
 
 window.addEventListener('DOMContentLoaded', () => {
 	const radios = document.querySelectorAll('.content__check-wrap label');
@@ -11,4 +12,5 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 	submittingForm();
+	validate();
 });

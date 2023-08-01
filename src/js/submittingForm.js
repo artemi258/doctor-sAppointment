@@ -1,4 +1,4 @@
-export function submittingForm() {
+export const submittingForm = () => {
 	const form = document.querySelector('.content__form'),
 		loading = document.querySelector('.content__loader'),
 		loadingMessage = document.querySelector('.content__loader .content__loader-message'),
@@ -46,4 +46,4 @@ export function submittingForm() {
 	};
 
 	form.addEventListener('submit', submit);
-}
+};

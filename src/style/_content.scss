@@ -45,11 +45,17 @@
 		label {
 			position: absolute;
 			left: 20px;
-			top: -35%;
+			top: -17px;
 			font-size: 20px;
 			color: #4676d7;
 			padding: 5px 5px;
 			background-color: #fff;
+		}
+		span {
+			display: none;
+			color: red;
+			font-size: 16px;
+			margin-top: 5px;
 		}
 		&-tooltipUrl {
 			visibility: hidden;
@@ -65,7 +71,7 @@
 			&::after {
 				content: '';
 				position: absolute;
-				top: 10px; /* At the bottom of the tooltip */
+				top: 10px;
 				left: -29px;
 				border-width: 14px;
 				border-style: solid;
