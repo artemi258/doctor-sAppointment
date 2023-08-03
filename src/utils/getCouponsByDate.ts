@@ -44,6 +44,8 @@ export const getCouponsByDate = async (
 
 	const index = date.findIndex((date) => date === byDate);
 
+	if (index < 0) return;
+
 	date = date.slice(0, index + 1);
 
 	arrTitle.length = date.length;
