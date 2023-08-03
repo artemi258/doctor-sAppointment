@@ -10,15 +10,17 @@
 			<form class="content__form">
 				<div class="content__wrapper">
 					<div class="content__input">
-						<input placeholder="example@yandex.ru" name="email" id="email" type="email" />
+						<input required placeholder="example@yandex.ru" name="email" id="email" type="email" />
 						<label for="email">адрес вашей электронной почты</label>
 						<span id="errorEmail"
 							>латиница, может включать цифры и спецсимволы вроде дефиса, обязательно должна быть
 							«собака» (@) и точка после неё, но перед точкой обязательно должны быть буквы</span
 						>
 					</div>
+
 					<div class="content__input">
 						<input
+							required
 							placeholder="https://rish.registratura96.ru/DayInfo?CityId=city36&OrgId=13003729&DepId=99560003239&ServId=Фельдшер%20участковый&DocId=63013"
 							name="url"
 							id="url"
@@ -34,6 +36,14 @@
 								Зайдите на страницу нужного вам доктора и скопируйте его url адрес.
 							</p>
 						</div>
+					</div>
+					<div class="content__input">
+						<input placeholder="example@yandex.ru" name="date" id="date" type="date" />
+						<label for="email">адрес вашей электронной почты</label>
+						<span id="errorEmail"
+							>латиница, может включать цифры и спецсимволы вроде дефиса, обязательно должна быть
+							«собака» (@) и точка после неё, но перед точкой обязательно должны быть буквы</span
+						>
 					</div>
 					<div class="content__check">
 						<div class="content__check-text">Проверять наличие талонов один раз в:</div>

@@ -1,16 +1,12 @@
 import '../style/style.scss';
+import { clickOnSpace } from '../utils/clickOnSpace';
+import { dateRestriction } from '../utils/dateRestriction';
 import { submittingForm } from './submittingForm';
 import { validate } from './validate';
 
 window.addEventListener('DOMContentLoaded', () => {
-	const radios = document.querySelectorAll('.content__check-wrap label');
-	document.addEventListener('keydown', (e) => {
-		if (e.code === 'Space') {
-			radios.forEach((item) => {
-				if (e.target.textContent === item.textContent) e.target.click();
-			});
-		}
-	});
+	dateRestriction();
+	clickOnSpace();
 	submittingForm();
 	validate();
 });

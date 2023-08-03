@@ -12,6 +12,7 @@ export const submittingForm = () => {
 		loadingMessage.textContent = 'бегу создавать задачу...';
 
 		const formData = new FormData(form);
+		console.log(formData.get('date'));
 
 		// const obj = {
 		// 	email: formData.get('email'),
