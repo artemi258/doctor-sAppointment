@@ -3,13 +3,14 @@ import { getDates } from './getDates';
 import { ILogger } from '../logger/logger.interface';
 import { sendMail } from './sendEmail';
 
-export const getCoupons = async (
+export const getCouponsByDate = async (
 	page: Page,
 	browser: Browser,
 	doctorName: string,
 	email: string,
+	byDate: Date,
 	logger: ILogger
-): Promise<string[] | void> => {
+): Promise<void> => {
 	let numberCoupons: number = 0;
 	let date: Date[] = [];
 	let arrTitle: string[] = [];
@@ -41,6 +42,17 @@ export const getCoupons = async (
 
 	date.length = 21;
 
+	const index = date.findIndex((date) => date === byDate);
+
+	if (index < 0) {
+		logger.error('выбранная дата прошла или неверно указана');
+		return;
+	}
+
+	date = date.slice(0, index + 1);
+
+	arrTitle.length = date.length;
+
 	arrTitle.forEach((item) => {
 		const num = +item.slice(-1);
 		if (num) numberCoupons += num;
@@ -48,14 +60,14 @@ export const getCoupons = async (
 
 	if (numberCoupons) {
 		await browser.close();
-		const text = `доступен(но) ${numberCoupons} талон(a/ов)`;
+		const text = `в период выбранной даты, появился(ось) ${numberCoupons} талон(а/ов)`;
 		logger.log(`${text}, Доктор: ${doctorName}`);
 		sendMail(email, { text, doctorName });
 	} else {
 		setTimeout(async () => {
 			await page.reload({ timeout: 0 });
-			logger.log(`Произошло обновление страницы с доктором ${doctorName}`);
-			getCoupons(page, browser, doctorName, email, logger);
+			logger.log(`Обновление страницы по дате с доктором ${doctorName} до ${byDate}`);
+			getCouponsByDate(page, browser, doctorName, email, byDate, logger);
 		}, 1000 * 60);
 	}
 };

@@ -1,5 +1,5 @@
 export interface IGetDates {
-	future: string[];
+	future: Date[];
 	numberingOtherMonth: number[];
 }
 
@@ -17,7 +17,7 @@ export const getDates = (): IGetDates => {
 			}
 			return !el.classList.contains('fc-other-month') && !el.classList.contains('fc-past');
 		})
-		.map((el) => el.getAttribute('data-date') ?? '');
+		.map((el) => el.getAttribute('data-date') ?? '') as unknown as Date[];
 
 	return {
 		future: dates,

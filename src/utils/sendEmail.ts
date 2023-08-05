@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 
 interface IData {
-	numberCoupons: number;
+	text: string;
 	doctorName: string;
 }
 
@@ -21,6 +21,6 @@ export const sendMail = async (email: string, data: IData) => {
 		to: `${email}`,
 		subject: 'Сообщение о появлении талонов',
 		html: `<strong>Доктор</strong>: ${data.doctorName}<br/>
-		       <strong>Талоны</strong>: доступен(но) ${data.numberCoupons} талон(a/ов)`,
+		       <strong>Талоны</strong>: ${data.text}`,
 	});
 };
