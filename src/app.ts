@@ -6,6 +6,7 @@ import cors from 'cors';
 import { Server } from 'http';
 import { TYPES } from './types';
 import { ILogger } from './logger/logger.interface';
+import { IExeptionFilter } from './errors/exeption.filter.interface';
 
 @injectable()
 export class App {
@@ -15,7 +16,8 @@ export class App {
 
 	constructor(
 		@inject(TYPES.Logger) private logger: ILogger,
-		@inject(TYPES.TasksController) private tasksController: TasksController
+		@inject(TYPES.TasksController) private tasksController: TasksController,
+		@inject(TYPES.ExeptionFilter) private exeptionFilter: IExeptionFilter
 	) {
 		this.app = express();
 		this.port = 8000;
@@ -30,7 +32,9 @@ export class App {
 		this.app.use('/api', this.tasksController.router);
 	};
 
-	useExeptionFilters = (): void => {};
+	useExeptionFilters = (): void => {
+		this.app.use(this.exeptionFilter.catch);
+	};
 
 	public init = (): void => {
 		this.useMiddleware();

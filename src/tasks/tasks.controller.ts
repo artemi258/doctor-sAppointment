@@ -45,8 +45,7 @@ export class TasksController extends BaseController implements ITasksController 
 				this.created(res);
 			})
 			.catch((err) => {
-				this.loggerService.error(err);
-				res.status(500).send('ошибка создания задачи');
+				next(err);
 			});
 	};
 	bySelectedDate = (
@@ -57,12 +56,11 @@ export class TasksController extends BaseController implements ITasksController 
 		this.tasksService
 			.createTaskBySelectedDate(body)
 			.then(() => {
-				this.loggerService.log(`${body.email} задача создана`);
+				this.loggerService.log(`${body.email} задача создана по ${body.byDate}`);
 				this.created(res);
 			})
 			.catch((err) => {
-				this.loggerService.error(err);
-				res.status(500).send('ошибка создания задачи');
+				next(err);
 			});
 	};
 }

@@ -44,14 +44,14 @@ export const getCouponsByDate = async (
 
 	const index = date.findIndex((date) => date === byDate);
 
-	if (index < 0) return;
+	if (index < 0) {
+		logger.error('выбранная дата прошла или неверно указана');
+		return;
+	}
 
 	date = date.slice(0, index + 1);
 
 	arrTitle.length = date.length;
-
-	logger.log(date);
-	logger.log(arrTitle);
 
 	arrTitle.forEach((item) => {
 		const num = +item.slice(-1);
@@ -65,7 +65,8 @@ export const getCouponsByDate = async (
 		sendMail(email, { text, doctorName });
 	} else {
 		setTimeout(async () => {
-			await page.reload();
+			await page.reload({ timeout: 0 });
+			logger.log(`Обновление страницы по дате с доктором ${doctorName} до ${byDate}`);
 			getCouponsByDate(page, browser, doctorName, email, byDate, logger);
 		}, 1000 * 60);
 	}

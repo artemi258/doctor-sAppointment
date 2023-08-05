@@ -53,7 +53,8 @@ export const getCoupons = async (
 		sendMail(email, { text, doctorName });
 	} else {
 		setTimeout(async () => {
-			await page.reload();
+			await page.reload({ timeout: 0 });
+			logger.log(`Произошло обновление страницы с доктором ${doctorName}`);
 			getCoupons(page, browser, doctorName, email, logger);
 		}, 1000 * 60);
 	}

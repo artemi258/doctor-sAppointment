@@ -7,12 +7,15 @@ import { ITasksController } from './tasks/tasks.controller.interface';
 import { TasksController } from './tasks/tasks.controller';
 import { ITasksService } from './tasks/tasks.service.interface';
 import { TasksService } from './tasks/tasks.service';
+import { IExeptionFilter } from './errors/exeption.filter.interface';
+import { ExeptionFilter } from './errors/exeption.filter';
 
 export const appBinding = new ContainerModule((bind: interfaces.Bind) => {
 	bind<App>(TYPES.Application).to(App);
 	bind<ILogger>(TYPES.Logger).to(LoggerService).inSingletonScope();
 	bind<ITasksController>(TYPES.TasksController).to(TasksController).inSingletonScope();
 	bind<ITasksService>(TYPES.TasksService).to(TasksService).inSingletonScope();
+	bind<IExeptionFilter>(TYPES.ExeptionFilter).to(ExeptionFilter).inSingletonScope();
 });
 
 const bootstrap = () => {

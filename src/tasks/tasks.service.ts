@@ -32,7 +32,6 @@ export class TasksService implements ITasksService {
 
 			return true;
 		} catch (error) {
-			this.logger.error('ошибка создания задачи');
 			throw new Error('ошибка создания задачи');
 		}
 	};
@@ -57,7 +56,6 @@ export class TasksService implements ITasksService {
 
 			return true;
 		} catch (error) {
-			this.logger.error('ошибка создания задачи');
 			throw new Error('ошибка создания задачи');
 		}
 	};

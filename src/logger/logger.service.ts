@@ -6,12 +6,11 @@ export class LoggerService implements ILogger {
 	public logger: Logger<ILogObj>;
 
 	constructor() {
-		this.logger = new Logger({
-			displayInstanceName: false,
-			displayLoggerName: false,
+		this.logger = new Logger<ILogObj>({
+			prettyLogTemplate: '{{dd}}-{{mm}}-{{yyyy}} {{hh}}:{{MM}}:{{ss}} {{logLevelName}} ',
+			prettyLogTimeZone: 'local',
 			hideLogPositionForProduction: true,
-			displayFunctionName: false,
-		} as ISettingsParam<ILogObj>);
+		});
 	}
 
 	log(...args: unknown[]): void {
