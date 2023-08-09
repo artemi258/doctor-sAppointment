@@ -29,7 +29,6 @@ export class TasksService implements ITasksService {
 				})) ?? '';
 
 			getCoupons(page, browser, doctorName, email, this.logger);
-
 			return true;
 		} catch (error) {
 			throw new Error('ошибка создания задачи');

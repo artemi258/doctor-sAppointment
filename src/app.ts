@@ -12,7 +12,7 @@ import { IExeptionFilter } from './errors/exeption.filter.interface';
 export class App {
 	app: Express;
 	server: Server | undefined;
-	port: number;
+	port: number | string;
 
 	constructor(
 		@inject(TYPES.Logger) private logger: ILogger,
@@ -20,7 +20,7 @@ export class App {
 		@inject(TYPES.ExeptionFilter) private exeptionFilter: IExeptionFilter
 	) {
 		this.app = express();
-		this.port = 8000;
+		this.port = process.env.PORT ?? 8000;
 	}
 
 	useMiddleware = (): void => {
