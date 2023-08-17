@@ -11,63 +11,70 @@ export const getCouponsByDate = async (
 	byDate: Date,
 	logger: ILogger
 ): Promise<void> => {
-	let numberCoupons: number = 0;
-	let date: Date[] = [];
-	let arrTitle: string[] = [];
+	try {
+		let numberCoupons: number = 0;
+		let date: Date[] = [];
+		let arrTitle: string[] = [];
 
-	const title = await page.$$eval('.fc-title', (title) => title.map((el) => el.textContent ?? ''));
-	const filteringFuture = await page.evaluate(getDates);
-
-	const btnDisabled = await page.evaluate(() => {
-		return !(document.querySelector('.fc-corner-right') as HTMLButtonElement)?.disabled;
-	});
-
-	date = [...filteringFuture.future];
-	arrTitle = title.filter((el, i) => !filteringFuture.numberingOtherMonth.includes(i));
-
-	if (btnDisabled) {
-		const btn = await page.$('.fc-corner-right');
-		if (btn) await btn.click();
-		const filteringFutureTwo = await page.evaluate(getDates);
-		const titleTwo = await page.$$eval('.fc-title', (title) =>
+		const title = await page.$$eval('.fc-title', (title) =>
 			title.map((el) => el.textContent ?? '')
 		);
-		arrTitle = [
-			...arrTitle,
-			...titleTwo.filter((el, i) => !filteringFutureTwo.numberingOtherMonth.includes(i)),
-		];
+		const filteringFuture = await page.evaluate(getDates);
 
-		date = [...date, ...filteringFutureTwo.future];
-	}
+		const btnDisabled = await page.evaluate(() => {
+			return !(document.querySelector('.fc-corner-right') as HTMLButtonElement)?.disabled;
+		});
 
-	date.length = 21;
+		date = [...filteringFuture.future];
+		arrTitle = title.filter((el, i) => !filteringFuture.numberingOtherMonth.includes(i));
 
-	const index = date.findIndex((date) => date === byDate);
+		if (btnDisabled) {
+			const btn = await page.$('.fc-corner-right');
+			if (btn) await btn.click();
+			const filteringFutureTwo = await page.evaluate(getDates);
+			const titleTwo = await page.$$eval('.fc-title', (title) =>
+				title.map((el) => el.textContent ?? '')
+			);
+			arrTitle = [
+				...arrTitle,
+				...titleTwo.filter((el, i) => !filteringFutureTwo.numberingOtherMonth.includes(i)),
+			];
 
-	if (index < 0) {
-		logger.error('выбранная дата прошла или неверно указана');
-		return;
-	}
+			date = [...date, ...filteringFutureTwo.future];
+		}
 
-	date = date.slice(0, index + 1);
+		date.length = 21;
 
-	arrTitle.length = date.length;
+		const index = date.findIndex((date) => date === byDate);
 
-	arrTitle.forEach((item) => {
-		const num = +item.slice(-1);
-		if (num) numberCoupons += num;
-	});
+		if (index < 0) {
+			logger.error('выбранная дата прошла или неверно указана');
+			return;
+		}
 
-	if (numberCoupons) {
-		await browser.close();
-		const text = `в период выбранной даты, появился(ось) ${numberCoupons} талон(а/ов)`;
-		logger.log(`${text}, Доктор: ${doctorName}`);
+		date = date.slice(0, index + 1);
+
+		arrTitle.length = date.length;
+
+		arrTitle.forEach((item) => {
+			const num = +item.slice(-1);
+			if (num) numberCoupons += num;
+		});
+
+		if (numberCoupons) {
+			await browser.close();
+			const text = `в период выбранной даты, появился(ось) ${numberCoupons} талон(а/ов)`;
+			logger.log(`${text}, Доктор: ${doctorName}`);
+			sendMail(email, { text, doctorName });
+		} else {
+			setTimeout(async () => {
+				await page.reload({ timeout: 0 });
+				logger.log(`Обновление страницы по дате с доктором ${doctorName} до ${byDate}`);
+				getCouponsByDate(page, browser, doctorName, email, byDate, logger);
+			}, 1000 * 60);
+		}
+	} catch (error) {
+		const text = 'Возникла ошибка при ожидании талона или врач убран из списка';
 		sendMail(email, { text, doctorName });
-	} else {
-		setTimeout(async () => {
-			await page.reload({ timeout: 0 });
-			logger.log(`Обновление страницы по дате с доктором ${doctorName} до ${byDate}`);
-			getCouponsByDate(page, browser, doctorName, email, byDate, logger);
-		}, 1000 * 60);
 	}
 };
