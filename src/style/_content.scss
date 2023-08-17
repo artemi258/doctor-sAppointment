@@ -23,6 +23,12 @@
 		&:not(:first-child) {
 			margin-top: 30px;
 		}
+		input:disabled {
+			background-color: rgba(70, 118, 215, 0.2);
+		}
+		input:disabled + label {
+			display: none;
+		}
 		input {
 			border-radius: 8px;
 			width: 100%;
@@ -39,6 +45,10 @@
 			}
 		}
 		&:focus-within .content__input-tooltipUrl {
+			visibility: visible;
+			opacity: 1;
+		}
+		&:focus-within .content__input-tooltipDate {
 			visibility: visible;
 			opacity: 1;
 		}
@@ -89,6 +99,53 @@
 			&_desc {
 				font-size: 20px;
 			}
+		}
+		&-tooltipDate {
+			visibility: hidden;
+			position: absolute;
+			opacity: 0;
+			right: -110%;
+			top: 0;
+			width: 400px;
+			border: 1px #4676d7 solid;
+			border-radius: 10px;
+			padding: 10px 10px;
+			transition: all 0.3s linear;
+			&::after {
+				content: '';
+				position: absolute;
+				top: 10px;
+				left: -29px;
+				border-width: 14px;
+				border-style: solid;
+				border-color: transparent #4676d7 transparent transparent;
+			}
+			&_desc {
+				font-size: 20px;
+				margin: 0;
+				span {
+					color: #4676d7;
+					display: inline;
+					font-size: 20px;
+				}
+			}
+		}
+	}
+	&__byDate {
+		display: flex;
+		height: 40px;
+		align-items: center;
+		margin-top: 30px;
+		input {
+			width: 25px;
+			height: 25px;
+			cursor: pointer;
+		}
+		label {
+			padding-left: 10px;
+			color: #4676d7;
+			font-size: 20px;
+			cursor: pointer;
 		}
 	}
 	&__check {

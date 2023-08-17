@@ -37,13 +37,16 @@
 							</p>
 						</div>
 					</div>
+					<div class="content__byDate">
+						<input name="byDate" id="byDate" type="checkbox" />
+						<label for="byDate">проверять талон до определенной даты?</label>
+					</div>
 					<div class="content__input">
-						<input placeholder="example@yandex.ru" name="date" id="date" type="date" />
-						<label for="email">адрес вашей электронной почты</label>
-						<span id="errorEmail"
-							>латиница, может включать цифры и спецсимволы вроде дефиса, обязательно должна быть
-							«собака» (@) и точка после неё, но перед точкой обязательно должны быть буквы</span
-						>
+						<input name="date" id="date" type="date" />
+						<label data-date for="date">до какой даты проверять талон</label>
+						<div class="content__input-tooltipDate">
+							<p class="content__input-tooltipDate_desc"></p>
+						</div>
 					</div>
 					<div class="content__check">
 						<div class="content__check-text">Проверять наличие талонов один раз в:</div>
