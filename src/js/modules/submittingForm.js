@@ -3,7 +3,10 @@ export const submittingForm = () => {
 		loading = document.querySelector('.content__loader'),
 		loadingMessage = document.querySelector('.content__loader .content__loader-message'),
 		success = document.querySelector('.content__success'),
-		error = document.querySelector('.content__error');
+		error = document.querySelector('.content__error'),
+		inputEmail = document.querySelector('#email'),
+		inputUrl = document.querySelector('#url'),
+		button = document.querySelector('.content__button');
 
 	const submit = async (e) => {
 		e.preventDefault();
@@ -14,6 +17,8 @@ export const submittingForm = () => {
 		const formData = new FormData(form);
 		let obj;
 		let url;
+		console.log(formData.get('date'));
+
 		console.log(formData.get('date'));
 		if (formData.get('date')) {
 			obj = {
@@ -31,6 +36,7 @@ export const submittingForm = () => {
 		}
 
 		new Promise((res, rej) => {
+			button.disabled = 'disabled';
 			setTimeout(() => {
 				loadingMessage.textContent = 'почти добежал...';
 			}, 5000);
@@ -51,6 +57,11 @@ export const submittingForm = () => {
 				console.log(err);
 			})
 			.finally(() => {
+				inputEmail.style.border = '1px #4676d7 solid';
+				inputEmail.style.boxShadow = 'none';
+				inputUrl.style.border = '1px #4676d7 solid';
+				inputUrl.style.boxShadow = 'none';
+				button.disabled = '';
 				setTimeout(() => {
 					error.style.display = 'none';
 					success.style.display = 'none';

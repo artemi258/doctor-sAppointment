@@ -1,0 +1,13 @@
+.title {
+	color: #4676d7;
+	text-align: center;
+	position: relative;
+	span {
+		color: rgb(230, 143, 30);
+	}
+	&::after {
+		content: 'beta';
+		position: absolute;
+		font-size: 14px;
+	}
+}

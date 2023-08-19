@@ -1,9 +1,6 @@
 .content {
 	width: 450px;
-	position: absolute;
-	left: 25%;
-	top: 30%;
-	transform: translate(-50%, -50%);
+	margin: 0 auto;
 	border: 1px #4676d7 solid;
 	border-radius: 10px;
 	box-shadow: 5px 5px 10px black;
@@ -203,7 +200,7 @@
 			}
 		}
 		&-message {
-			color: greenyellow;
+			color: rgb(102, 171, 0);
 		}
 	}
 	&__error {
