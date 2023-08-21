@@ -8,7 +8,7 @@ export class LoggerService implements ILogger {
 	constructor() {
 		this.logger = new Logger<ILogObj>({
 			prettyLogTemplate: '{{dd}}-{{mm}}-{{yyyy}} {{hh}}:{{MM}}:{{ss}} {{logLevelName}} ',
-			prettyLogTimeZone: process.env.PORT ? 'UTC' : 'local',
+			prettyLogTimeZone: 'local',
 			hideLogPositionForProduction: true,
 		});
 	}
