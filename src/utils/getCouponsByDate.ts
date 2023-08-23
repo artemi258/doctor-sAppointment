@@ -49,6 +49,8 @@ export const getCouponsByDate = async (
 
 		if (index < 0) {
 			logger.error('выбранная дата прошла или неверно указана');
+			const text = `<span style="color: red; margin: 0">выбранная дата ${byDate} прошла и ожидание талонов окончена</span>`;
+			sendMail(email, { text, doctorName });
 			return;
 		}
 
@@ -69,12 +71,11 @@ export const getCouponsByDate = async (
 		} else {
 			setTimeout(async () => {
 				await page.reload({ timeout: 0 });
-				logger.log(`Обновление страницы по дате с доктором ${doctorName} до ${byDate}`);
 				getCouponsByDate(page, browser, doctorName, email, byDate, logger);
 			}, 1000 * 60);
 		}
 	} catch (error) {
-		const text = 'Возникла ошибка при ожидании талона или врач убран из списка';
+		const text = `<span style="color: red; margin: 0">Возникла ошибка при ожидании талона или врач убран из списка</span>`;
 		sendMail(email, { text, doctorName });
 	}
 };

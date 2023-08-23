@@ -24,13 +24,17 @@ export class TasksService implements ITasksService {
 			doctorName =
 				(await page.$$eval('.text-primary.loader-link', (link) => {
 					if (link) {
+						if (link.length < 5) return null;
 						return link.pop()?.textContent;
 					}
 				})) ?? '';
 
+			if (!doctorName) throw new Error('неверно указан url адрес врача');
+
 			getCoupons(page, browser, doctorName, email, this.logger);
 			return true;
 		} catch (error) {
+			if (error instanceof Error) throw new Error(error.message);
 			throw new Error('ошибка создания задачи');
 		}
 	};
@@ -47,14 +51,18 @@ export class TasksService implements ITasksService {
 			doctorName =
 				(await page.$$eval('.text-primary.loader-link', (link) => {
 					if (link) {
+						if (link.length < 5) return null;
 						return link.pop()?.textContent;
 					}
 				})) ?? '';
+
+			if (!doctorName) throw new Error('неверно указан url адрес врача');
 
 			getCouponsByDate(page, browser, doctorName, email, byDate, this.logger);
 
 			return true;
 		} catch (error) {
+			if (error instanceof Error) throw new Error(error.message);
 			throw new Error('ошибка создания задачи');
 		}
 	};

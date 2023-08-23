@@ -57,12 +57,12 @@ export const getCoupons = async (
 		} else {
 			setTimeout(async () => {
 				await page.reload({ timeout: 0 });
-				logger.log(`Произошло обновление страницы с доктором ${doctorName}`);
 				getCoupons(page, browser, doctorName, email, logger);
 			}, 1000 * 60);
 		}
 	} catch (error) {
-		const text = 'Возникла ошибка при ожидании талона или врач убран из списка';
+		const text =
+			'<span style="color: red; margin: 0">Возникла ошибка при ожидании талона или врач убран из списка</span>';
 		sendMail(email, { text, doctorName });
 	}
 };
