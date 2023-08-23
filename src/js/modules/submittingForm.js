@@ -39,7 +39,7 @@ export const submittingForm = () => {
 			button.disabled = 'disabled';
 			setTimeout(() => {
 				loadingMessage.textContent = 'почти добежал...';
-			}, 5000);
+			}, 6000);
 			fetch(url, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -65,7 +65,7 @@ export const submittingForm = () => {
 				setTimeout(() => {
 					error.style.display = 'none';
 					success.style.display = 'none';
-				}, 5000);
+				}, 8000);
 			});
 	};
 
