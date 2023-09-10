@@ -4,6 +4,7 @@ export const submittingForm = () => {
 		loadingMessage = document.querySelector('.content__loader .content__loader-message'),
 		success = document.querySelector('.content__success'),
 		error = document.querySelector('.content__error'),
+		errorMessage = document.querySelector('.content__error-message'),
 		inputEmail = document.querySelector('#email'),
 		inputUrl = document.querySelector('#url'),
 		button = document.querySelector('.content__button');
@@ -17,9 +18,7 @@ export const submittingForm = () => {
 		const formData = new FormData(form);
 		let obj;
 		let url;
-		console.log(formData.get('date'));
 
-		console.log(formData.get('date'));
 		if (formData.get('date')) {
 			obj = {
 				email: formData.get('email'),
@@ -46,15 +45,21 @@ export const submittingForm = () => {
 				body: JSON.stringify(obj),
 			}).then((result) => res(result));
 		})
-			.then(() => {
-				loading.style.display = 'none';
-				success.style.display = 'flex';
-				form.reset();
+			.then((res) => {
+				if (res.ok) {
+					loading.style.display = 'none';
+					success.style.display = 'flex';
+					form.reset();
+				} else {
+					return res.text().then((text) => {
+						throw new Error(text);
+					});
+				}
 			})
 			.catch((err) => {
 				loading.style.display = 'none';
 				error.style.display = 'flex';
-				console.log(err);
+				errorMessage.textContent = `${err.message}!`;
 			})
 			.finally(() => {
 				inputEmail.style.border = '1px #4676d7 solid';
@@ -65,7 +70,7 @@ export const submittingForm = () => {
 				setTimeout(() => {
 					error.style.display = 'none';
 					success.style.display = 'none';
-				}, 8000);
+				}, 9000);
 			});
 	};
 
