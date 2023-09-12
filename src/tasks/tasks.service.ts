@@ -18,8 +18,13 @@ export class TasksService implements ITasksService {
   }: NearestTicketDto): Promise<boolean> => {
     try {
       let doctorName: string | undefined;
-
-      const browser: Browser = await puppeteer.launch();
+      const options = process.env.NODE_ENV
+        ? undefined
+        : {
+            executablePath: "/usr/bin/chromium-browser",
+            args: ["--no-sandbox"],
+          };
+      const browser: Browser = await puppeteer.launch(options);
       const page: Page = await browser.newPage();
 
       await page.goto(url);
@@ -27,19 +32,24 @@ export class TasksService implements ITasksService {
       doctorName =
         (await page.$$eval(".text-primary.loader-link", (link) => {
           if (link) {
-            if (link.length < 5) return null;
+            if (link.length < 6) return null;
             return link.pop()?.textContent;
           }
         })) ?? "";
 
-      if (!doctorName) throw new Error();
+      if (!doctorName) throw new Error("доктор");
 
       getCoupons(page, browser, doctorName, email, this.logger);
       return true;
     } catch (error) {
-      if (error instanceof Error)
-        throw new Error("неверно указан url адрес врача");
-      throw new Error("Произошла ошибка, попробуйте еще раз чуть позже");
+      if (error instanceof Error) {
+        if (error.message === "доктор") {
+          throw new Error("неверно указан url адрес врача");
+        }
+      }
+      throw new Error(
+        "Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже"
+      );
     }
   };
 
@@ -50,8 +60,13 @@ export class TasksService implements ITasksService {
   }: BySelectedDateDto) => {
     try {
       let doctorName: string | undefined;
-
-      const browser: Browser = await puppeteer.launch();
+      const options = process.env.NODE_ENV
+        ? undefined
+        : {
+            executablePath: "/usr/bin/chromium-browser",
+            args: ["--no-sandbox"],
+          };
+      const browser: Browser = await puppeteer.launch(options);
       const page: Page = await browser.newPage();
 
       await page.goto(url);
@@ -59,20 +74,25 @@ export class TasksService implements ITasksService {
       doctorName =
         (await page.$$eval(".text-primary.loader-link", (link) => {
           if (link) {
-            if (link.length < 5) return null;
+            if (link.length < 6) return null;
             return link.pop()?.textContent;
           }
         })) ?? "";
 
-      if (!doctorName) throw new Error();
+      if (!doctorName) throw new Error("доктор");
 
       getCouponsByDate(page, browser, doctorName, email, byDate, this.logger);
 
       return true;
     } catch (error) {
-      if (error instanceof Error)
-        throw new Error("неверно указан url адрес врача");
-      throw new Error("Произошла ошибка, попробуйте еще раз чуть позже");
+      if (error instanceof Error) {
+        if (error.message === "доктор") {
+          throw new Error("неверно указан url адрес врача");
+        }
+      }
+      throw new Error(
+        "Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже"
+      );
     }
   };
 }
