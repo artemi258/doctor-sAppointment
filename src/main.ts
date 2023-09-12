@@ -27,13 +27,6 @@ const bootstrap = () => {
   appContainer.load(appBinding);
   const app = appContainer.get<App>(TYPES.Application);
   app.init();
-
-  setInterval(() => {
-    fetch("https://doctor-sappointment.onrender.com", {
-      method: "GET",
-    });
-    console.log("прошло 14 минут!");
-  }, 1000 * 60 * 14);
 };
 
 bootstrap();
