@@ -21,6 +21,7 @@ export class TasksService implements ITasksService {
 
       const browser: Browser = await puppeteer.launch({
         executablePath: "/usr/bin/chromium-browser",
+        args: ["--no-sandbox"],
       });
       const page: Page = await browser.newPage();
 
