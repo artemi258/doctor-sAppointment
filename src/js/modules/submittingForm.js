@@ -39,6 +39,12 @@ export const submittingForm = () => {
 			setTimeout(() => {
 				loadingMessage.textContent = 'почти добежал...';
 			}, 6000);
+			setTimeout(() => {
+				rej({
+					message:
+						'вышло время подключения к серверу, на данный момент сервер не доступен, попробуйте в другой раз',
+				});
+			}, 20000);
 			fetch(url, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
