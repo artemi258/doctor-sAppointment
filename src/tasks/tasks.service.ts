@@ -37,6 +37,7 @@ export class TasksService implements ITasksService {
       getCoupons(page, browser, doctorName, email, this.logger);
       return true;
     } catch (error) {
+      console.log(error);
       if (error instanceof Error)
         throw new Error("неверно указан url адрес врача");
       throw new Error("Произошла ошибка, попробуйте еще раз чуть позже");
