@@ -20,7 +20,7 @@ export class TasksService implements ITasksService {
       let doctorName: string | undefined;
 
       const browser: Browser = await puppeteer.launch({
-        args: ["--no-sanbox"],
+        executablePath: "/usr/bin/chromium-browser",
       });
       const page: Page = await browser.newPage();
 
