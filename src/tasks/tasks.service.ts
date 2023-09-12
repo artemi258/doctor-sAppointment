@@ -19,9 +19,7 @@ export class TasksService implements ITasksService {
     try {
       let doctorName: string | undefined;
 
-      const browser: Browser = await puppeteer.launch({
-        args: ["--no-sanbox"],
-      });
+      const browser: Browser = await puppeteer.launch();
       const page: Page = await browser.newPage();
 
       await page.goto(url);
