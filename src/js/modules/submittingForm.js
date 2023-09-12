@@ -25,13 +25,13 @@ export const submittingForm = () => {
 				url: formData.get('url'),
 				byDate: formData.get('date'),
 			};
-			url = 'http://45.153.69.161:8000/api/tasks/bySelectedDate';
+			url = 'https://45.153.69.161:8000/api/tasks/bySelectedDate';
 		} else {
 			obj = {
 				email: formData.get('email'),
 				url: formData.get('url'),
 			};
-			url = 'http://45.153.69.161:8000/api/tasks/nearestTicket';
+			url = 'https://45.153.69.161:8000/api/tasks/nearestTicket';
 		}
 
 		new Promise((res, rej) => {
