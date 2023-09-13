@@ -1,4 +1,4 @@
-import { clickOnSpace } from './modules/clickOnSpace';
+// import { clickOnSpace } from './modules/clickOnSpace';
 import { dateRestriction } from './modules/dateRestriction';
 import { submittingForm } from './modules/submittingForm';
 import { validate } from '../utils/validate';
@@ -11,7 +11,7 @@ process.env.NODE_ENV === 'production' ? null : yandexMetrika();
 
 window.addEventListener('DOMContentLoaded', () => {
 	dateRestriction();
-	clickOnSpace();
+	// clickOnSpace();
 	submittingForm();
 	validate();
 	isCheckboxByDate();
