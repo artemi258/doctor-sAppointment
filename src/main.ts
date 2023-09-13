@@ -24,7 +24,7 @@ export const appBinding = new ContainerModule((bind: interfaces.Bind) => {
 });
 
 const bootstrap = () => {
-  setMaxListeners(50);
+  setMaxListeners(30);
   const appContainer = new Container();
   appContainer.load(appBinding);
   const app = appContainer.get<App>(TYPES.Application);
