@@ -100,6 +100,7 @@ export class TasksService implements ITasksService {
 
       return true;
     } catch (error) {
+      this.logger.error(error);
       if (error instanceof Error) {
         if (error.message === "доктор") {
           throw new Error("неверно указан url адрес врача!");
