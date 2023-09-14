@@ -43,7 +43,7 @@ export class TasksController
     next: NextFunction
   ): void => {
     const mem = Math.round((os.freemem() / os.totalmem()) * 100);
-    this.loggerService.log(`память: ${mem}%`);
+    this.loggerService.log(`свободно памяти: ${mem}%`);
     if (mem < 10) {
       next({
         message:
@@ -67,7 +67,7 @@ export class TasksController
     next: NextFunction
   ): void => {
     const mem = Math.round((os.freemem() / os.totalmem()) * 100);
-    this.loggerService.log(`память: ${mem}%`);
+    this.loggerService.log(`свободно памяти: ${mem}%`);
     if (mem < 10) {
       next({
         message:
