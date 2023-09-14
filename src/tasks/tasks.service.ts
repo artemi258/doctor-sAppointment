@@ -73,7 +73,6 @@ export class TasksService implements ITasksService {
       const options = process.env.NODE_ENV
         ? undefined
         : {
-            executablePath: "/usr/bin/chromium-browser",
             args: ["--no-sandbox"],
           };
       const browser: Browser = await puppeteer.launch(options);
