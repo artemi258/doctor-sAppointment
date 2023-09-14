@@ -18,13 +18,12 @@ export class TasksService implements ITasksService {
   }: NearestTicketDto): Promise<boolean> => {
     try {
       let doctorName: string | undefined;
-      // const options = process.env.NODE_ENV
-      //   ? undefined
-      //   : {
-      //       executablePath: "/usr/bin/chromium-browser",
-      //       args: ["--no-sandbox"],
-      //     };
-      const browser: Browser = await puppeteer.launch();
+      const options = process.env.NODE_ENV
+        ? undefined
+        : {
+            args: ["--no-sandbox"],
+          };
+      const browser: Browser = await puppeteer.launch(options);
       const page: Page = await browser.newPage();
 
       await page.goto(url).catch(async () => {
