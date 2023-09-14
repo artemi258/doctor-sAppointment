@@ -20,7 +20,7 @@ export class App {
     @inject(TYPES.ExeptionFilter) private exeptionFilter: IExeptionFilter
   ) {
     this.app = express();
-    this.port = process.env.PORT ?? 8000;
+    this.port = process.env.PORT ?? 8089;
   }
 
   useMiddleware = (): void => {
