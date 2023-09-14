@@ -7,7 +7,7 @@ export const validate = () => {
 	inputEmail.addEventListener('input', (e) => {
 		const value = e.target.value;
 
-		if (/^[\w]+@[\w]+\.[A-Za-z]{2,}$/i.test(value)) {
+		if (/^[\w-]+@[\w]+\.[A-Za-z]{2,}$/i.test(value)) {
 			inputEmail.style.border = '1px green solid';
 			inputEmail.style.boxShadow = '1px 1px 10px 1px green';
 			inputEmailSpan.style.display = 'none';
@@ -20,7 +20,7 @@ export const validate = () => {
 	inputUrl.addEventListener('input', (e) => {
 		const value = e.target.value;
 
-		if (/^https:\/\/rish\.registratura96\.ru.+/i.test(value)) {
+		if (/^https:\/\/(rish\.)?registratura1?96\.ru.+/i.test(value)) {
 			inputUrl.style.border = '1px green solid';
 			inputUrl.style.boxShadow = '1px 1px 10px 1px green';
 			inputUrlSpan.style.display = 'none';

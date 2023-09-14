@@ -7,17 +7,37 @@ export const submittingForm = () => {
 		errorMessage = document.querySelector('.content__error-message'),
 		inputEmail = document.querySelector('#email'),
 		inputUrl = document.querySelector('#url'),
+		checkboxDate = document.querySelector('#byDate'),
 		button = document.querySelector('.content__button');
 
 	const submit = async (e) => {
 		e.preventDefault();
 
-		loading.style.display = 'flex';
-		loadingMessage.textContent = 'бегу создавать задачу...';
+		if (inputEmail.style.borderColor === 'red' || inputUrl.style.borderColor === 'red') {
+			error.style.display = 'flex';
+			errorMessage.textContent = 'заполните все поля!';
+			setTimeout(() => {
+				error.style.display = 'none';
+			}, 7000);
+			return;
+		}
 
 		const formData = new FormData(form);
 		let obj;
 		let url;
+
+		if (checkboxDate.checked && !formData.get('date')) {
+			error.style.display = 'flex';
+			errorMessage.textContent =
+				'выберите дату или уберите галочку с поля "проверять талон до определенной даты?"';
+			setTimeout(() => {
+				error.style.display = 'none';
+			}, 7000);
+			return;
+		}
+
+		loading.style.display = 'flex';
+		loadingMessage.textContent = 'бегу создавать задачу...';
 
 		if (formData.get('date')) {
 			obj = {
