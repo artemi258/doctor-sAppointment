@@ -1,6 +1,5 @@
 import { inject } from "inversify";
 import os from "os";
-
 import { BaseController } from "../common/base.controller";
 import { ITasksController } from "./tasks.controller.interface";
 import { TYPES } from "../types";
