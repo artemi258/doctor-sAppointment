@@ -27,7 +27,10 @@ export class TasksService implements ITasksService {
       const browser: Browser = await puppeteer.launch(options);
       const page: Page = await browser.newPage();
 
-      await page.goto(url);
+      await page.goto(url).catch(async () => {
+        await browser.close();
+        throw new Error("url");
+      });
 
       doctorName =
         (await page.$$eval(".text-primary.loader-link", (link) => {
@@ -37,18 +40,25 @@ export class TasksService implements ITasksService {
           }
         })) ?? "";
 
-      if (!doctorName) throw new Error("доктор");
+      if (!doctorName) {
+        await browser.close();
+        throw new Error("доктор");
+      }
 
       getCoupons(page, browser, doctorName, email, this.logger);
       return true;
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === "доктор") {
-          throw new Error("неверно указан url адрес врача");
+          throw new Error("неверно указан url адрес врача!");
+        } else {
+          throw new Error(
+            "неверно указан url адрес врача или страница не доступна!"
+          );
         }
       }
       throw new Error(
-        "Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже"
+        "Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже."
       );
     }
   };
@@ -69,7 +79,10 @@ export class TasksService implements ITasksService {
       const browser: Browser = await puppeteer.launch(options);
       const page: Page = await browser.newPage();
 
-      await page.goto(url);
+      await page.goto(url).catch(async () => {
+        await browser.close();
+        throw new Error("url");
+      });
 
       doctorName =
         (await page.$$eval(".text-primary.loader-link", (link) => {
@@ -79,7 +92,10 @@ export class TasksService implements ITasksService {
           }
         })) ?? "";
 
-      if (!doctorName) throw new Error("доктор");
+      if (!doctorName) {
+        await browser.close();
+        throw new Error("доктор");
+      }
 
       getCouponsByDate(page, browser, doctorName, email, byDate, this.logger);
 
@@ -87,11 +103,15 @@ export class TasksService implements ITasksService {
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === "доктор") {
-          throw new Error("неверно указан url адрес врача");
+          throw new Error("неверно указан url адрес врача!");
+        } else {
+          throw new Error(
+            "неверно указан url адрес врача или страница не доступна!"
+          );
         }
       }
       throw new Error(
-        "Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже"
+        "Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже."
       );
     }
   };

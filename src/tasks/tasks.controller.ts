@@ -1,4 +1,6 @@
 import { inject } from "inversify";
+import os from "os";
+
 import { BaseController } from "../common/base.controller";
 import { ITasksController } from "./tasks.controller.interface";
 import { TYPES } from "../types";
@@ -41,6 +43,13 @@ export class TasksController
     res: Response,
     next: NextFunction
   ): void => {
+    if (Math.round((os.freemem() / os.totalmem()) * 100) < 10) {
+      next({
+        message:
+          "вревышен лимит заявок на отслеживания талонов, попробуйте в другой раз, возможно освободится место для вас!",
+      });
+      return;
+    }
     this.tasksService
       .createTaskNearestTicket(body)
       .then(() => {
@@ -56,6 +65,13 @@ export class TasksController
     res: Response,
     next: NextFunction
   ): void => {
+    if (Math.round((os.freemem() / os.totalmem()) * 100) < 10) {
+      next({
+        message:
+          "вревышен лимит заявок на отслеживания талонов, попробуйте в другой раз, возможно освободится место для вас!",
+      });
+      return;
+    }
     this.tasksService
       .createTaskBySelectedDate(body)
       .then(() => {
