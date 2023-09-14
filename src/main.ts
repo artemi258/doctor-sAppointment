@@ -1,5 +1,5 @@
 import { Container, ContainerModule, interfaces } from "inversify";
-import { setMaxListeners, EventEmitter } from "events";
+import { setMaxListeners } from "events";
 import { TYPES } from "./types";
 import { App } from "./app";
 import { ILogger } from "./logger/logger.interface";
