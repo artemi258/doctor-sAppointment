@@ -53,6 +53,7 @@ export const getCouponsByDate = async (
     const index = date.findIndex((date) => date === byDate);
 
     if (index < 0) {
+      await browser.close();
       logger.error(`выбранная дата ${byDate} прошла`);
       const text = `<span style="color: red; margin: 0">выбранная дата ${byDate} прошла и ожидание талонов окончена</span>`;
       sendMail(email, { text, doctorName });
@@ -75,7 +76,11 @@ export const getCouponsByDate = async (
       sendMail(email, { text, doctorName });
     } else {
       setTimeout(async () => {
-        await page.reload({ timeout: 0 });
+        await page.reload({ timeout: 0 }).catch(async (err) => {
+          logger.error(err);
+          await browser.close();
+          throw new Error();
+        });
         getCouponsByDate(page, browser, doctorName, email, byDate, logger);
       }, 1000 * 60);
     }

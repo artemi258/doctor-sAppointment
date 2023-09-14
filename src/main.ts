@@ -1,5 +1,5 @@
 import { Container, ContainerModule, interfaces } from "inversify";
-import { setMaxListeners } from "node:events";
+import { setMaxListeners, EventEmitter } from "events";
 import { TYPES } from "./types";
 import { App } from "./app";
 import { ILogger } from "./logger/logger.interface";
@@ -24,7 +24,7 @@ export const appBinding = new ContainerModule((bind: interfaces.Bind) => {
 });
 
 const bootstrap = () => {
-  setMaxListeners(30);
+  setMaxListeners(50);
   const appContainer = new Container();
   appContainer.load(appBinding);
   const app = appContainer.get<App>(TYPES.Application);
