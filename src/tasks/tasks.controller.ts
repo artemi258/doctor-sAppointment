@@ -42,7 +42,9 @@ export class TasksController
     res: Response,
     next: NextFunction
   ): void => {
-    if (Math.round((os.freemem() / os.totalmem()) * 100) < 10) {
+    const mem = Math.round((os.freemem() / os.totalmem()) * 100);
+    this.loggerService.log(`память: ${mem}%`);
+    if (mem < 10) {
       next({
         message:
           "вревышен лимит заявок на отслеживания талонов, попробуйте в другой раз, возможно освободится место для вас!",
@@ -64,7 +66,9 @@ export class TasksController
     res: Response,
     next: NextFunction
   ): void => {
-    if (Math.round((os.freemem() / os.totalmem()) * 100) < 10) {
+    const mem = Math.round((os.freemem() / os.totalmem()) * 100);
+    this.loggerService.log(`память: ${mem}%`);
+    if (mem < 10) {
       next({
         message:
           "вревышен лимит заявок на отслеживания талонов, попробуйте в другой раз, возможно освободится место для вас!",

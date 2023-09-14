@@ -51,7 +51,7 @@ export class TasksService implements ITasksService {
       if (error instanceof Error) {
         if (error.message === "доктор") {
           throw new Error("неверно указан url адрес врача!");
-        } else {
+        } else if (error.message === "url") {
           throw new Error(
             "неверно указан url адрес врача или страница не доступна!"
           );
@@ -104,7 +104,7 @@ export class TasksService implements ITasksService {
       if (error instanceof Error) {
         if (error.message === "доктор") {
           throw new Error("неверно указан url адрес врача!");
-        } else {
+        } else if (error.message === "url") {
           throw new Error(
             "неверно указан url адрес врача или страница не доступна!"
           );
