@@ -7,7 +7,7 @@ import { yandexMetrika } from './modules/yandexMetrika';
 
 import '../style/style.scss';
 
-process.env.NODE_ENV === 'production' ? null : yandexMetrika();
+process.env.NODE_ENV === 'production' ? yandexMetrika() : null;
 
 window.addEventListener('DOMContentLoaded', () => {
 	dateRestriction();
