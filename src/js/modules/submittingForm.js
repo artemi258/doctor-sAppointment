@@ -1,3 +1,5 @@
+import { parseRateLimit } from 'ratelimit-header-parser';
+
 export const submittingForm = () => {
 	const form = document.querySelector('.content__form'),
 		loading = document.querySelector('.content__loader'),
@@ -51,7 +53,8 @@ export const submittingForm = () => {
 				email: formData.get('email'),
 				url: formData.get('url'),
 			};
-			url = 'https://server.notificationofcoupons.site/api/tasks/nearestTicket';
+			url = 'http://localhost:8089/api/tasks/nearestTicket';
+			// url = 'https://server.notificationofcoupons.site/api/tasks/nearestTicket';
 		}
 
 		new Promise((res, rej) => {
@@ -77,6 +80,7 @@ export const submittingForm = () => {
 					success.style.display = 'flex';
 					form.reset();
 				} else {
+					console.log(parseRateLimit(res));
 					return res.text().then((text) => {
 						throw new Error(text);
 					});
@@ -85,7 +89,7 @@ export const submittingForm = () => {
 			.catch((err) => {
 				loading.style.display = 'none';
 				error.style.display = 'flex';
-				errorMessage.textContent = `${err.message}!`;
+				errorMessage.textContent = err.message;
 			})
 			.finally(() => {
 				inputEmail.style.border = '1px #4676d7 solid';
