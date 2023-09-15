@@ -7,6 +7,7 @@ import { Server } from "http";
 import { TYPES } from "./types";
 import { ILogger } from "./logger/logger.interface";
 import { IExeptionFilter } from "./errors/exeption.filter.interface";
+import { RateLimitForUsers } from "./middlewares/rateLimitForUsers";
 
 @injectable()
 export class App {
@@ -26,6 +27,7 @@ export class App {
   useMiddleware = (): void => {
     this.app.use(express.json());
     this.app.use(cors());
+    this.app.use(new RateLimitForUsers().excute());
   };
 
   useRoutes = (): void => {
