@@ -1,5 +1,3 @@
-import { parseRateLimit } from 'ratelimit-header-parser';
-
 export const submittingForm = () => {
 	const form = document.querySelector('.content__form'),
 		loading = document.querySelector('.content__loader'),
@@ -80,7 +78,6 @@ export const submittingForm = () => {
 					success.style.display = 'flex';
 					form.reset();
 				} else {
-					console.log(parseRateLimit(res));
 					return res.text().then((text) => {
 						throw new Error(text);
 					});
