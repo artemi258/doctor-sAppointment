@@ -1,4 +1,4 @@
-import rateLimit from "express-rate-limit";
+import rateLimit, { Options } from "express-rate-limit";
 import { IMiddleware } from "../common/middleware.interface";
 import { NextFunction, Request, Response } from "express";
 import { HTTPError } from "../errors/http-error.class";
@@ -11,7 +11,12 @@ export class RateLimitForUsers implements IMiddleware {
       standardHeaders: "draft-7",
       legacyHeaders: false,
       skipFailedRequests: true,
-      handler: (req: Request, res: Response, next: NextFunction, options) => {
+      handler: (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+        options: Options
+      ) => {
         const hours = Math.floor(
           +(req.res?.getHeaders()["retry-after"]?.valueOf() ?? 0) / 60 / 60
         );
