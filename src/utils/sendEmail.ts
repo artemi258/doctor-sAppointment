@@ -11,13 +11,13 @@ export const sendMail = async (email: string, data: IData) => {
 		port: 465,
 		secure: true,
 		auth: {
-			user: 'portfolioartem@yandex.ru',
-			pass: 'rjgnlighpdfylakz',
+			user: 'notificationOfCoupons@yandex.ru',
+			pass: 'rmskelznyzwotwgr',
 		},
 	});
 
 	await transporter.sendMail({
-		from: '"Coupons" <portfolioartem@yandex.ru>',
+		from: '"Coupons" <notificationOfCoupons@yandex.ru>',
 		to: `${email}`,
 		subject: 'Сообщение о появлении талонов',
 		html: `<strong>Доктор</strong>: ${data.doctorName}<br/>
