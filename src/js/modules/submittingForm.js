@@ -51,8 +51,7 @@ export const submittingForm = () => {
 				email: formData.get('email'),
 				url: formData.get('url'),
 			};
-			url = 'http://localhost:8089/api/tasks/nearestTicket';
-			// url = 'https://server.notificationofcoupons.site/api/tasks/nearestTicket';
+			url = 'https://server.notificationofcoupons.site/api/tasks/nearestTicket';
 		}
 
 		new Promise((res, rej) => {
