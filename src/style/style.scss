@@ -1,12 +1,12 @@
 @import 'normalize.css';
 @import './content';
 @import './title';
+@import './connection';
 
 * {
 	box-sizing: border-box;
 }
 body {
-	// position: relative;
 	width: 100vw;
 	height: 100vh;
 }
