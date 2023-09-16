@@ -3,7 +3,7 @@ export const dateRestriction = () => {
 		dateDesc = document.querySelector('.content__input-tooltipDate_desc'),
 		date = new Date(),
 		min = date.toLocaleDateString().split('.').reverse().join('-'),
-		max = new Date(date.setDate(date.getDate() + 20))
+		max = new Date(date.setDate(date.getDate() + 13))
 			.toLocaleDateString()
 			.split('.')
 			.reverse()
@@ -14,5 +14,5 @@ export const dateRestriction = () => {
 
 	const maxTooltip = max.split('-').reverse().join('-');
 
-	dateDesc.innerHTML = `можно выбрать максимум до <span>${maxTooltip}</span> числа`;
+	dateDesc.innerHTML = `можно выбрать максимум до <span>${maxTooltip}</span> числа включительно`;
 };
