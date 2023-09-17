@@ -28,7 +28,7 @@ export class App {
 	useMiddleware = (): void => {
 		this.app.use(express.json());
 		this.app.use(cors());
-		this.app.use(new RateLimitForUsers().excute());
+		this.app.use(new RateLimitForUsers(this.logger).excute());
 		this.app.use(new CheckingFreeMemory().excute);
 	};
 
@@ -41,6 +41,7 @@ export class App {
 	};
 
 	public init = (): void => {
+		this.app.set('trust proxy', 1);
 		this.useMiddleware();
 		this.useRoutes();
 		this.useExeptionFilters();
