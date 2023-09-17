@@ -1,118 +1,106 @@
-import { inject, injectable } from "inversify";
-import puppeteer, { Browser, Page } from "puppeteer";
-import { NearestTicketDto } from "./dto/task-nearestTicket.dto";
-import { ITasksService } from "./tasks.service.interface";
-import { TYPES } from "../types";
-import { ILogger } from "../logger/logger.interface";
-import { getCoupons } from "../utils/getCoupons";
-import { BySelectedDateDto } from "./dto/task-bySelectedDate";
-import { getCouponsByDate } from "../utils/getCouponsByDate";
+import { inject, injectable } from 'inversify';
+import puppeteer, { Browser, Page } from 'puppeteer';
+import { NearestTicketDto } from './dto/task-nearestTicket.dto';
+import { ITasksService } from './tasks.service.interface';
+import { TYPES } from '../types';
+import { ILogger } from '../logger/logger.interface';
+import { getCoupons } from '../utils/getCoupons';
+import { BySelectedDateDto } from './dto/task-bySelectedDate';
+import { getCouponsByDate } from '../utils/getCouponsByDate';
 
 @injectable()
 export class TasksService implements ITasksService {
-  constructor(@inject(TYPES.Logger) private logger: ILogger) {}
+	constructor(@inject(TYPES.Logger) private logger: ILogger) {}
 
-  createTaskNearestTicket = async ({
-    email,
-    url,
-  }: NearestTicketDto): Promise<boolean> => {
-    try {
-      let doctorName: string | undefined;
-      const options = process.env.NODE_ENV
-        ? undefined
-        : {
-            args: ["--no-sandbox"],
-          };
-      const browser: Browser = await puppeteer.launch(options);
-      const page: Page = await browser.newPage();
+	createTaskNearestTicket = async ({
+		email,
+		url,
+	}: NearestTicketDto): Promise<{ doctorName: string }> => {
+		try {
+			let doctorName: string | undefined;
+			const options = process.env.NODE_ENV
+				? undefined
+				: {
+						args: ['--no-sandbox'],
+				  };
+			const browser: Browser = await puppeteer.launch(options);
+			const page: Page = await browser.newPage();
 
-      await page.goto(url).catch(async () => {
-        await browser.close();
-        throw new Error("url");
-      });
+			await page.goto(url).catch(async () => {
+				await browser.close();
+				throw new Error('url');
+			});
 
-      doctorName =
-        (await page.$$eval(".text-primary.loader-link", (link) => {
-          if (link) {
-            if (link.length < 6) return null;
-            return link.pop()?.textContent;
-          }
-        })) ?? "";
+			doctorName =
+				(await page.$$eval('.text-primary.loader-link', (link) => {
+					if (link) {
+						if (link.length < 6) return null;
+						return link.pop()?.textContent;
+					}
+				})) ?? '';
 
-      if (!doctorName) {
-        await browser.close();
-        throw new Error("доктор");
-      }
+			if (!doctorName) {
+				await browser.close();
+				throw new Error('доктор');
+			}
 
-      getCoupons(page, browser, doctorName, email, this.logger);
-      return true;
-    } catch (error) {
-      this.logger.error(error);
-      if (error instanceof Error) {
-        if (error.message === "доктор") {
-          throw new Error("неверно указан url адрес врача!");
-        } else if (error.message === "url") {
-          throw new Error(
-            "неверно указан url адрес врача или страница не доступна!"
-          );
-        }
-      }
-      throw new Error(
-        "Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже."
-      );
-    }
-  };
+			getCoupons(page, browser, doctorName, email, this.logger);
+			return { doctorName };
+		} catch (error) {
+			this.logger.error(error);
+			if (error instanceof Error) {
+				if (error.message === 'доктор') {
+					throw new Error('неверно указан url адрес врача!');
+				} else if (error.message === 'url') {
+					throw new Error('неверно указан url адрес врача или страница не доступна!');
+				}
+			}
+			throw new Error('Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже.');
+		}
+	};
 
-  createTaskBySelectedDate = async ({
-    email,
-    url,
-    byDate,
-  }: BySelectedDateDto) => {
-    try {
-      let doctorName: string | undefined;
-      const options = process.env.NODE_ENV
-        ? undefined
-        : {
-            args: ["--no-sandbox"],
-          };
-      const browser: Browser = await puppeteer.launch(options);
-      const page: Page = await browser.newPage();
+	createTaskBySelectedDate = async ({ email, url, byDate }: BySelectedDateDto) => {
+		try {
+			let doctorName: string | undefined;
+			const options = process.env.NODE_ENV
+				? undefined
+				: {
+						args: ['--no-sandbox'],
+				  };
+			const browser: Browser = await puppeteer.launch(options);
+			const page: Page = await browser.newPage();
 
-      await page.goto(url).catch(async () => {
-        await browser.close();
-        throw new Error("url");
-      });
+			await page.goto(url).catch(async () => {
+				await browser.close();
+				throw new Error('url');
+			});
 
-      doctorName =
-        (await page.$$eval(".text-primary.loader-link", (link) => {
-          if (link) {
-            if (link.length < 6) return null;
-            return link.pop()?.textContent;
-          }
-        })) ?? "";
+			doctorName =
+				(await page.$$eval('.text-primary.loader-link', (link) => {
+					if (link) {
+						if (link.length < 6) return null;
+						return link.pop()?.textContent;
+					}
+				})) ?? '';
 
-      if (!doctorName) {
-        await browser.close();
-        throw new Error("доктор");
-      }
+			if (!doctorName) {
+				await browser.close();
+				throw new Error('доктор');
+			}
 
-      getCouponsByDate(page, browser, doctorName, email, byDate, this.logger);
+			getCouponsByDate(page, browser, doctorName, email, byDate, this.logger);
 
-      return true;
-    } catch (error) {
-      this.logger.error(error);
-      if (error instanceof Error) {
-        if (error.message === "доктор") {
-          throw new Error("неверно указан url адрес врача!");
-        } else if (error.message === "url") {
-          throw new Error(
-            "неверно указан url адрес врача или страница не доступна!"
-          );
-        }
-      }
-      throw new Error(
-        "Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже."
-      );
-    }
-  };
+			return { doctorName };
+		} catch (error) {
+			this.logger.error(error);
+			if (error instanceof Error) {
+				if (error.message === 'доктор') {
+					throw new Error('неверно указан url адрес врача!');
+				} else if (error.message === 'url') {
+					throw new Error('неверно указан url адрес врача или страница не доступна!');
+				}
+			}
+			throw new Error('Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже.');
+		}
+	};
 }
