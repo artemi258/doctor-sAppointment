@@ -16,7 +16,7 @@ export class RateLimitForUsers implements IMiddleware {
 				const minuts = Math.floor(
 					(+(req.res?.getHeaders()['retry-after']?.valueOf() ?? 0) / 60) % 60
 				);
-
+				console.log(req.ip);
 				next(
 					new HTTPError(
 						options.statusCode,
