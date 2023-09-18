@@ -5,7 +5,6 @@ import { sendMail } from './sendEmail';
 
 export const getCoupons = async (
 	page: Page,
-	browser: Browser,
 	doctorName: string,
 	email: string,
 	logger: ILogger
@@ -44,7 +43,7 @@ export const getCoupons = async (
 		});
 
 		if (numberCoupons) {
-			await browser.close();
+			await page.close();
 			const text = `доступен(но) ${numberCoupons} талон(a/ов)`;
 			logger.log(`${text}, Доктор: ${doctorName}`);
 			sendMail(email, { text, doctorName });
@@ -52,10 +51,10 @@ export const getCoupons = async (
 			setTimeout(async () => {
 				await page.reload({ timeout: 0 }).catch(async (err) => {
 					logger.error(err);
-					await browser.close();
+					await page.close();
 					throw new Error();
 				});
-				getCoupons(page, browser, doctorName, email, logger);
+				getCoupons(page, doctorName, email, logger);
 			}, 1000 * 60);
 		}
 	} catch (error) {

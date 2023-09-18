@@ -10,14 +10,10 @@ export class RateLimitForUsers implements IMiddleware {
 	excute = () => {
 		return rateLimit({
 			windowMs: 1000 * 60 * 60 * 24,
-			limit: 2,
+			limit: 100,
 			standardHeaders: 'draft-7',
 			legacyHeaders: false,
 			skipFailedRequests: true,
-			keyGenerator: (req: Request, res: Response) => {
-				this.logger.log(`ip клиента: ${req.ip}`);
-				return req.ip;
-			},
 			handler: (req: Request, res: Response, next: NextFunction, options: Options) => {
 				const hours = Math.floor(+(req.res?.getHeaders()['retry-after']?.valueOf() ?? 0) / 60 / 60);
 				const minuts = Math.floor(
