@@ -10,6 +10,12 @@ import { ITasksService } from './tasks/tasks.service.interface';
 import { TasksService } from './tasks/tasks.service';
 import { IExeptionFilter } from './errors/exeption.filter.interface';
 import { ExeptionFilter } from './errors/exeption.filter';
+import { IWaitingForCoupons } from './utils/waitingForCoupons.interface';
+import { WaitingForCoupons } from './utils/waitingForCoupons';
+import { ISendMail } from './utils/sendMail.interface';
+import { SendMail } from './utils/sendMail';
+import { IConfigService } from './config/config.service.interface';
+import { ConfigService } from './config/config.service';
 
 export const appBinding = new ContainerModule((bind: interfaces.Bind) => {
 	bind<App>(TYPES.Application).to(App);
@@ -17,6 +23,9 @@ export const appBinding = new ContainerModule((bind: interfaces.Bind) => {
 	bind<ITasksController>(TYPES.TasksController).to(TasksController).inSingletonScope();
 	bind<ITasksService>(TYPES.TasksService).to(TasksService).inSingletonScope();
 	bind<IExeptionFilter>(TYPES.ExeptionFilter).to(ExeptionFilter).inSingletonScope();
+	bind<IWaitingForCoupons>(TYPES.WaitingForCoupons).to(WaitingForCoupons).inSingletonScope();
+	bind<ISendMail>(TYPES.SendMail).to(SendMail).inSingletonScope();
+	bind<IConfigService>(TYPES.ConfigService).to(ConfigService).inSingletonScope();
 });
 
 const bootstrap = () => {
