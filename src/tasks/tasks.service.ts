@@ -4,14 +4,16 @@ import { NearestTicketDto } from './dto/task-nearestTicket.dto';
 import { ITasksService } from './tasks.service.interface';
 import { TYPES } from '../types';
 import { ILogger } from '../logger/logger.interface';
-import { getCoupons } from '../utils/getCoupons';
 import { BySelectedDateDto } from './dto/task-bySelectedDate';
-import { getCouponsByDate } from '../utils/getCouponsByDate';
+import { IWaitingForCoupons } from '../utils/waitingForCoupons.interface';
 
 @injectable()
 export class TasksService implements ITasksService {
 	browser: Browser;
-	constructor(@inject(TYPES.Logger) private logger: ILogger) {}
+	constructor(
+		@inject(TYPES.Logger) private logger: ILogger,
+		@inject(TYPES.WaitingForCoupons) private waitingForCoupons: IWaitingForCoupons
+	) {}
 
 	createTaskNearestTicket = async ({
 		email,
@@ -39,7 +41,7 @@ export class TasksService implements ITasksService {
 				throw new Error('доктор');
 			}
 
-			getCoupons(page, doctorName, email, this.logger);
+			this.waitingForCoupons.getCoupons(page, doctorName, email, this.logger);
 			return { doctorName };
 		} catch (error) {
 			this.logger.error(error);
@@ -57,16 +59,10 @@ export class TasksService implements ITasksService {
 	createTaskBySelectedDate = async ({ email, url, byDate }: BySelectedDateDto) => {
 		try {
 			let doctorName: string | undefined;
-			const options = process.env.NODE_ENV
-				? undefined
-				: {
-						args: ['--no-sandbox'],
-				  };
-			const browser: Browser = await puppeteer.launch(options);
-			const page: Page = await browser.newPage();
+			const page: Page = await this.browser.newPage();
 
 			await page.goto(url).catch(async () => {
-				await browser.close();
+				await page.close();
 				throw new Error('url');
 			});
 
@@ -79,11 +75,11 @@ export class TasksService implements ITasksService {
 				})) ?? '';
 
 			if (!doctorName) {
-				await browser.close();
+				await page.close();
 				throw new Error('доктор');
 			}
 
-			getCouponsByDate(page, browser, doctorName, email, byDate, this.logger);
+			this.waitingForCoupons.getCouponsByDate(page, doctorName, email, byDate, this.logger);
 
 			return { doctorName };
 		} catch (error) {

@@ -10,7 +10,7 @@ export class RateLimitForUsers implements IMiddleware {
 	excute = () => {
 		return rateLimit({
 			windowMs: 1000 * 60 * 60 * 24,
-			limit: 100,
+			limit: 2,
 			standardHeaders: 'draft-7',
 			legacyHeaders: false,
 			skipFailedRequests: true,
