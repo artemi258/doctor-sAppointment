@@ -10,6 +10,7 @@ import { getCouponsByDate } from '../utils/getCouponsByDate';
 
 @injectable()
 export class TasksService implements ITasksService {
+	browser: Browser;
 	constructor(@inject(TYPES.Logger) private logger: ILogger) {}
 
 	createTaskNearestTicket = async ({
@@ -18,19 +19,13 @@ export class TasksService implements ITasksService {
 	}: NearestTicketDto): Promise<{ doctorName: string }> => {
 		try {
 			let doctorName: string | undefined;
-			const options = process.env.NODE_ENV
-				? undefined
-				: {
-						args: ['--no-sandbox'],
-				  };
-			const browser: Browser = await puppeteer.launch(options);
-			const page: Page = await browser.newPage();
+
+			const page: Page = await this.browser.newPage();
 
 			await page.goto(url).catch(async () => {
-				await browser.close();
+				await page.close();
 				throw new Error('url');
 			});
-
 			doctorName =
 				(await page.$$eval('.text-primary.loader-link', (link) => {
 					if (link) {
@@ -40,11 +35,11 @@ export class TasksService implements ITasksService {
 				})) ?? '';
 
 			if (!doctorName) {
-				await browser.close();
+				await page.close();
 				throw new Error('доктор');
 			}
 
-			getCoupons(page, browser, doctorName, email, this.logger);
+			getCoupons(page, doctorName, email, this.logger);
 			return { doctorName };
 		} catch (error) {
 			this.logger.error(error);
@@ -102,5 +97,14 @@ export class TasksService implements ITasksService {
 			}
 			throw new Error('Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже.');
 		}
+	};
+
+	initBrowser = async () => {
+		const options = process.env.NODE_ENV
+			? undefined
+			: {
+					args: ['--no-sandbox'],
+			  };
+		this.browser = await puppeteer.launch(options);
 	};
 }
