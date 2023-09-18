@@ -45,8 +45,8 @@ export class TasksController extends BaseController implements ITasksController 
 				this.loggerService.log(
 					`емаил: ${body.email} ФИО доктора: ${result.doctorName} - задача создана`
 				);
-				const mem = Math.round(os.totalmem() - os.freemem());
-				this.loggerService.log(`осталось свободной памяти: ${mem}`);
+				const mem = Math.round((os.freemem() / os.totalmem()) * 100);
+				this.loggerService.log(`осталось свободной памяти: ${mem}%`);
 				this.created(res);
 			})
 			.catch((err) => {
