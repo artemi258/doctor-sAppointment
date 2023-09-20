@@ -16,6 +16,7 @@ import { ISendMail } from './utils/sendMail.interface';
 import { SendMail } from './utils/sendMail';
 import { IConfigService } from './config/config.service.interface';
 import { ConfigService } from './config/config.service';
+import { MongooseService } from './database/mongoose.service';
 
 export const appBinding = new ContainerModule((bind: interfaces.Bind) => {
 	bind<App>(TYPES.Application).to(App);
@@ -26,6 +27,7 @@ export const appBinding = new ContainerModule((bind: interfaces.Bind) => {
 	bind<IWaitingForCoupons>(TYPES.WaitingForCoupons).to(WaitingForCoupons).inSingletonScope();
 	bind<ISendMail>(TYPES.SendMail).to(SendMail).inSingletonScope();
 	bind<IConfigService>(TYPES.ConfigService).to(ConfigService).inSingletonScope();
+	bind<MongooseService>(TYPES.MongooseService).to(MongooseService).inSingletonScope();
 });
 
 const bootstrap = () => {

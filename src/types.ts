@@ -7,4 +7,5 @@ export const TYPES = {
 	WaitingForCoupons: Symbol.for('WaitingForCoupons'),
 	SendMail: Symbol.for('SendMail'),
 	ConfigService: Symbol.for('ConfigService'),
+	MongooseService: Symbol.for('MongooseService'),
 };
