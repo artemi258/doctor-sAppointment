@@ -16,9 +16,7 @@ export class MongooseService {
 			await mongoose.connect(
 				`mongodb://${this.configService.get('MONGO_LOGIN')}:${this.configService.get(
 					'MONGO_PASSWORD'
-				)}@${this.configService.get('MONGO_HOST')}:${this.configService.get(
-					'MONGO_PORT'
-				)}/${this.configService.get('MONGO_AUTHDATABASE')}`
+				)}@mongo:27017/admin`
 			);
 
 			this.logger.log('[MongooseService] Успешно подключились к базе данных');

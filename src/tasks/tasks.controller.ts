@@ -10,11 +10,13 @@ import { NearestTicketDto } from './dto/task-nearestTicket.dto';
 import { ITasksService } from './tasks.service.interface';
 import { BySelectedDateDto } from './dto/task-bySelectedDate';
 import { UserModel } from '../models/user.model';
+import { ITasksRepository } from './tasks.repository.interface';
 
 export class TasksController extends BaseController implements ITasksController {
 	constructor(
 		@inject(TYPES.Logger) private loggerService: ILogger,
-		@inject(TYPES.TasksService) private tasksService: ITasksService
+		@inject(TYPES.TasksService) private tasksService: ITasksService,
+		@inject(TYPES.TasksRepository) private tasksRepository: ITasksRepository
 	) {
 		super(loggerService);
 		this.bindRoutes(this.tasksRouter);
@@ -33,39 +35,49 @@ export class TasksController extends BaseController implements ITasksController 
 				method: 'post',
 			},
 			{
-				path: '/create',
-				func: this.create,
+				path: '/createUser',
+				func: this.createUser,
 				method: 'post',
 			},
 			{
-				path: '/update',
-				func: this.task,
+				path: '/createTask',
+				func: this.createTask,
+				method: 'post',
+			},
+			{
+				path: '/createUserAndTask',
+				func: this.createUserAndTask,
 				method: 'post',
 			},
 			{
 				path: '/find',
 				func: this.find,
-				method: 'post',
+				method: 'get',
 			},
 		];
 	}
 
-	create = (req: Request, res: Response, next: NextFunction): void => {
-		this.loggerService.log(req.body);
-		UserModel.create(req.body).then((res) => this.loggerService.log(res));
-		res.send();
+	createUser = (req: Request, res: Response, next: NextFunction): void => {
+		const result = this.tasksRepository.createUser(req.body.email);
+		res.send(result);
 	};
-	task = (req: Request, res: Response, next: NextFunction): void => {
-		this.loggerService.log(req.body);
-		UserModel.findByIdAndUpdate('650b3fa699d66b13945ae8a7', {
-			$push: { tasks: { nameTask: req.body.nameTask, url: 'poiuytrewq' } },
-		}).then((res) => this.loggerService.log(res));
-		res.send();
+	createTask = (req: Request, res: Response, next: NextFunction): void => {
+		const result = this.tasksRepository.createTask(req.body.id, {
+			nameTask: req.body.nameTask,
+			url: req.body.url,
+		});
+		res.send(result);
+	};
+	createUserAndTask = (req: Request, res: Response, next: NextFunction): void => {
+		const result = this.tasksRepository.createUserAndTask(req.body.email, {
+			nameTask: req.body.nameTask,
+			url: req.body.url,
+		});
+		res.send(result);
 	};
 	find = (req: Request, res: Response, next: NextFunction): void => {
-		this.loggerService.log(req.body);
-		UserModel.findById('650b3fa699d66b13945ae8a7').then((res) => this.loggerService.log(res));
-		res.send();
+		const result = this.tasksRepository.findUsers();
+		res.send(result);
 	};
 
 	taskNearestTicket = (

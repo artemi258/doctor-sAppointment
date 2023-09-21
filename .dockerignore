@@ -1,0 +1,6 @@
+./.gitignore
+./.prettierrc
+./.puppeteerrc.cjs
+./docker-compose.yml
+./Dockerfile
+./nodemon.json

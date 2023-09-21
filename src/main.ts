@@ -17,6 +17,10 @@ import { SendMail } from './utils/sendMail';
 import { IConfigService } from './config/config.service.interface';
 import { ConfigService } from './config/config.service';
 import { MongooseService } from './database/mongoose.service';
+import { IMainClassModel } from './models/mainClassModel.interface';
+import { MainClassModel } from './models/mainClassModel';
+import { ITasksRepository } from './tasks/tasks.repository.interface';
+import { TasksRepository } from './tasks/tasks.repository';
 
 export const appBinding = new ContainerModule((bind: interfaces.Bind) => {
 	bind<App>(TYPES.Application).to(App);
@@ -28,6 +32,8 @@ export const appBinding = new ContainerModule((bind: interfaces.Bind) => {
 	bind<ISendMail>(TYPES.SendMail).to(SendMail).inSingletonScope();
 	bind<IConfigService>(TYPES.ConfigService).to(ConfigService).inSingletonScope();
 	bind<MongooseService>(TYPES.MongooseService).to(MongooseService).inSingletonScope();
+	bind<IMainClassModel>(TYPES.MainClassModel).to(MainClassModel).inSingletonScope();
+	bind<ITasksRepository>(TYPES.TasksRepository).to(TasksRepository).inSingletonScope();
 });
 
 const bootstrap = () => {

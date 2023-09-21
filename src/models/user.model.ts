@@ -1,13 +1,13 @@
-import mongoose, { ObjectId, Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 type task = 'nearestTicket' | 'byDateTicket';
 
-interface ITask {
+export interface ITask {
 	nameTask: task;
 	url: string;
 }
 
-interface IUser {
+export interface IUser {
 	email: string;
 	tasks: ITask[];
 }

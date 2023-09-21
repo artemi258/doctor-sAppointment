@@ -8,4 +8,6 @@ export const TYPES = {
 	SendMail: Symbol.for('SendMail'),
 	ConfigService: Symbol.for('ConfigService'),
 	MongooseService: Symbol.for('MongooseService'),
+	MainClassModel: Symbol.for('MainClassModel'),
+	TasksRepository: Symbol.for('TasksRepository'),
 };
