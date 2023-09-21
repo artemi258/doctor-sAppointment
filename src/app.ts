@@ -9,6 +9,9 @@ import { ILogger } from './logger/logger.interface';
 import { IExeptionFilter } from './errors/exeption.filter.interface';
 import { RateLimitForUsers } from './middlewares/rateLimitForUsers.middleware';
 import { CheckingFreeMemory } from './middlewares/checkingFreeMemory.middleware';
+import { UserModel } from './models/user.model';
+import { TaskModel } from './models/task.model';
+import { ObjectId } from 'mongoose';
 
 @injectable()
 export class App {
@@ -47,6 +50,21 @@ export class App {
 		this.useExeptionFilters();
 		this.server = this.app.listen(this.port);
 		this.logger.log(`Сервер запущен на ${this.port} порту`);
+		// UserModel.create({ email: '098qwe@qew.ru' });
+		// TaskModel.create({
+		// 	nameTask: 'nearestTicket',
+		// 	url: 'qwe123',
+		// });
+		// 650b13de7105b35f5d473d04
+		// TaskModel.findOne({ email: 'qwe@qew.ru' })
+		// 	.populate('userId')
+		// 	.exec()
+		// 	.then((res) => this.logger.warn(res));
+		// UserModel.findOneAndUpdate(
+		// 	{ email: 'qwe@qew.ru' },
+		// 	{ $push: { tasks: { nameTask: 'nearest', url: 'qwe123' } } }
+		// );
+		// this.logger.log(new ObjectId() );
 	};
 
 	public close(): void {

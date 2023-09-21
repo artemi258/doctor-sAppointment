@@ -9,6 +9,7 @@ import { Request, Response, NextFunction } from 'express';
 import { NearestTicketDto } from './dto/task-nearestTicket.dto';
 import { ITasksService } from './tasks.service.interface';
 import { BySelectedDateDto } from './dto/task-bySelectedDate';
+import { UserModel } from '../models/user.model';
 
 export class TasksController extends BaseController implements ITasksController {
 	constructor(
@@ -31,8 +32,41 @@ export class TasksController extends BaseController implements ITasksController 
 				func: this.bySelectedDate,
 				method: 'post',
 			},
+			{
+				path: '/create',
+				func: this.create,
+				method: 'post',
+			},
+			{
+				path: '/update',
+				func: this.task,
+				method: 'post',
+			},
+			{
+				path: '/find',
+				func: this.find,
+				method: 'post',
+			},
 		];
 	}
+
+	create = (req: Request, res: Response, next: NextFunction): void => {
+		this.loggerService.log(req.body);
+		UserModel.create(req.body).then((res) => this.loggerService.log(res));
+		res.send();
+	};
+	task = (req: Request, res: Response, next: NextFunction): void => {
+		this.loggerService.log(req.body);
+		UserModel.findByIdAndUpdate('650b3fa699d66b13945ae8a7', {
+			$push: { tasks: { nameTask: req.body.nameTask, url: 'poiuytrewq' } },
+		}).then((res) => this.loggerService.log(res));
+		res.send();
+	};
+	find = (req: Request, res: Response, next: NextFunction): void => {
+		this.loggerService.log(req.body);
+		UserModel.findById('650b3fa699d66b13945ae8a7').then((res) => this.loggerService.log(res));
+		res.send();
+	};
 
 	taskNearestTicket = (
 		{ body }: Request<{}, {}, NearestTicketDto>,

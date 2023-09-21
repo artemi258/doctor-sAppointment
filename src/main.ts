@@ -36,6 +36,8 @@ const bootstrap = () => {
 	appContainer.load(appBinding);
 	const app = appContainer.get<App>(TYPES.Application);
 	const service = appContainer.get<TasksService>(TYPES.TasksService);
+	const dataBase = appContainer.get<MongooseService>(TYPES.MongooseService);
+	dataBase.connect();
 	service.initBrowser();
 	app.init();
 };

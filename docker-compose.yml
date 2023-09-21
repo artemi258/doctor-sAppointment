@@ -5,9 +5,9 @@ services:
     container_name: notificationofcouponsserver
     restart: always
     ports:
-      - 3089:3089
+      - 8089:8089
     volumes:
-      - ./.env:/app/.env
+      - ./:/app
   mongo:
     image: mongo
     container_name: mongodb

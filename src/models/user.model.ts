@@ -1,12 +1,23 @@
-import mongoose, { Schema, model, connect } from 'mongoose';
+import mongoose, { ObjectId, Schema, model } from 'mongoose';
+
+type task = 'nearestTicket' | 'byDateTicket';
+
+interface ITask {
+	nameTask: task;
+	url: string;
+}
 
 interface IUser {
 	email: string;
+	tasks: ITask[];
 }
 
-const userSchema = new Schema<IUser>({
-	email: { type: String, required: true, unique: true, lowercase: true },
-});
+const userSchema = new Schema<IUser>(
+	{
+		email: { type: String, unique: true, lowercase: true },
+		tasks: [{ nameTask: String, url: String }],
+	},
+	{ timestamps: true }
+);
 
-const UserModel = model<IUser>('User', userSchema);
-UserModel.create({ email: 3 });
+export const UserModel = model<IUser>('User', userSchema);

@@ -2,14 +2,24 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 import { ILogger } from '../logger/logger.interface';
 import mongoose from 'mongoose';
+import { IConfigService } from '../config/config.service.interface';
 
 @injectable()
 export class MongooseService {
-	constructor(@inject(TYPES.Logger) private logger: ILogger) {}
+	constructor(
+		@inject(TYPES.Logger) private logger: ILogger,
+		@inject(TYPES.ConfigService) private configService: IConfigService
+	) {}
 
 	async connect(): Promise<void> {
 		try {
-			await mongoose.connect('mongodb://127.0.0.1:27017/test');
+			await mongoose.connect(
+				`mongodb://${this.configService.get('MONGO_LOGIN')}:${this.configService.get(
+					'MONGO_PASSWORD'
+				)}@${this.configService.get('MONGO_HOST')}:${this.configService.get(
+					'MONGO_PORT'
+				)}/${this.configService.get('MONGO_AUTHDATABASE')}`
+			);
 
 			this.logger.log('[MongooseService] Успешно подключились к базе данных');
 		} catch (error) {
