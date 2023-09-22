@@ -35,6 +35,11 @@ export interface ITasksRepository {
 				})
 		| null
 	>;
-	// deleteTask: (req: Request, res: Response, next: NextFunction) => void;
-	// deleteUser: (req: Request, res: Response, next: NextFunction) => void;
+	deleteTask: (taskId: string) => void;
+	findUserByTaskId: (taskId: string) => Promise<
+		| (mongoose.FlattenMaps<IUser> & {
+				_id: mongoose.Types.ObjectId;
+		  })
+		| null
+	>;
 }

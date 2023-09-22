@@ -67,7 +67,30 @@ export class TasksRepository implements ITasksRepository {
 		return await this.models.user.findOne({ email }).lean().exec();
 	};
 
-	deleteTask = () => {};
+	deleteTask = async (taskId: string) => {
+		const user = await this.findUserByTaskId(taskId);
 
-	deleteUser = () => {};
+		if (user && user.tasks.length === 1) {
+			return await this.models.user.findOneAndDelete({ 'tasks._id': taskId }).lean().exec();
+		}
+		return await this.models.user
+			.findOneAndUpdate(
+				{ 'tasks._id': taskId },
+				{ $pull: { tasks: { _id: taskId } } },
+				{ new: true }
+			)
+			.lean()
+			.exec();
+	};
+
+	findUserByTaskId = async (
+		taskId: string
+	): Promise<
+		| (mongoose.FlattenMaps<IUser> & {
+				_id: mongoose.Types.ObjectId;
+		  })
+		| null
+	> => {
+		return await this.models.user.findOne({ 'tasks._id': taskId }).lean().exec();
+	};
 }

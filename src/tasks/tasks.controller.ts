@@ -38,11 +38,16 @@ export class TasksController extends BaseController implements ITasksController 
 				func: this.createUser,
 				method: 'post',
 			},
-			// {
-			// 	path: '/createTask',
-			// 	func: this.createTask,
-			// 	method: 'post',
-			// },
+			{
+				path: '/deleteTask',
+				func: this.deleteTask,
+				method: 'post',
+			},
+			{
+				path: '/findUserByTaskId',
+				func: this.findUserByTaskId,
+				method: 'post',
+			},
 			// {
 			// 	path: '/createUserAndTask',
 			// 	func: this.createUserAndTask,
@@ -56,8 +61,17 @@ export class TasksController extends BaseController implements ITasksController 
 		];
 	}
 
+	deleteTask = async (req: Request, res: Response, next: NextFunction) => {
+		const result = await this.tasksRepository.deleteTask(req.body.id);
+		res.json(result);
+	};
+
 	createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 		const result = await this.tasksRepository.createUser(req.body.email);
+		res.json(result);
+	};
+	findUserByTaskId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		const result = await this.tasksRepository.findUserByTaskId(req.body.id);
 		res.json(result);
 	};
 	// createTask = (req: Request, res: Response, next: NextFunction): void => {
