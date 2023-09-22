@@ -4,7 +4,9 @@ type task = 'nearestTicket' | 'byDateTicket';
 
 export interface ITask {
 	nameTask: task;
+	doctorName: string;
 	url: string;
+	byDate?: Date;
 }
 
 export interface IUser {
@@ -15,7 +17,7 @@ export interface IUser {
 const userSchema = new Schema<IUser>(
 	{
 		email: { type: String, unique: true, lowercase: true },
-		tasks: [{ nameTask: String, url: String }],
+		tasks: [{ nameTask: String, doctorName: String, url: String, byDate: String }],
 	},
 	{ timestamps: true }
 );

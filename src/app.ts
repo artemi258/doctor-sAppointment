@@ -9,9 +9,6 @@ import { ILogger } from './logger/logger.interface';
 import { IExeptionFilter } from './errors/exeption.filter.interface';
 import { RateLimitForUsers } from './middlewares/rateLimitForUsers.middleware';
 import { CheckingFreeMemory } from './middlewares/checkingFreeMemory.middleware';
-import { UserModel } from './models/user.model';
-import { TaskModel } from './models/task.model';
-import { ObjectId } from 'mongoose';
 
 @injectable()
 export class App {

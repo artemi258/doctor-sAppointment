@@ -21,7 +21,8 @@ export class TasksRepository implements ITasksRepository {
 				_id: mongoose.Types.ObjectId;
 			}
 	> => {
-		return this.models.user.create({ email });
+		const result = await this.models.user.create({ email });
+		return result;
 	};
 
 	createTask = async (
@@ -34,31 +35,39 @@ export class TasksRepository implements ITasksRepository {
 				})
 		| null
 	> => {
-		return await this.models.user.findByIdAndUpdate(id, {
-			$push: { tasks: { nameTask: task.nameTask, url: task.url } },
-		});
+		return await this.models.user
+			.findByIdAndUpdate(
+				id,
+				{
+					$push: { tasks: { nameTask: task.nameTask, doctorName: task.doctorName, url: task.url } },
+				},
+				{ new: true }
+			)
+			.lean();
 	};
 
 	createUserAndTask = async (email: string, task: ITask) => {
-		const user = await this.models.user.findOne({ email }).exec();
+		const user = await this.models.user.findOne({ email }).lean().exec();
 		if (user) {
 			return await this.createTask(user._id, task);
 		}
 
-		return await this.createUser(email).then((user) => this.createTask(user._id, task));
+		const newUser = await this.createUser(email);
+		return await this.createTask(newUser._id, task);
 	};
-	findUsers = async () => {
-		let arr: unknown = [];
-		const res = await this.models.user
-			.find({})
-			.exec()
-			.then((res) => {
-				this.logger.log(res);
-				arr = [...res];
-			});
-		this.logger.log(arr);
-		return arr;
+
+	findUser = async (
+		email: string
+	): Promise<
+		| (mongoose.FlattenMaps<IUser> & {
+				_id: mongoose.Types.ObjectId;
+		  })
+		| null
+	> => {
+		return await this.models.user.findOne({ email }).lean().exec();
 	};
+
 	deleteTask = () => {};
+
 	deleteUser = () => {};
 }
