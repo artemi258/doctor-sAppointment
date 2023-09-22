@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { ObjectId } from 'mongoose';
 import { inject, injectable } from 'inversify';
 import { ITasksRepository } from './tasks.repository.interface';
 import { TYPES } from '../types';
@@ -21,12 +21,11 @@ export class TasksRepository implements ITasksRepository {
 				_id: mongoose.Types.ObjectId;
 			}
 	> => {
-		const result = await this.models.user.create({ email });
-		return result;
+		return await this.models.user.create({ email });
 	};
 
-	createTask = async (
-		id: string | mongoose.Types.ObjectId,
+	createUserAndTask = async (
+		email: string,
 		task: ITask
 	): Promise<
 		| (mongoose.Document<unknown, {}, IUser> &
@@ -35,18 +34,6 @@ export class TasksRepository implements ITasksRepository {
 				})
 		| null
 	> => {
-		return await this.models.user
-			.findByIdAndUpdate(
-				id,
-				{
-					$push: { tasks: { nameTask: task.nameTask, doctorName: task.doctorName, url: task.url } },
-				},
-				{ new: true }
-			)
-			.lean();
-	};
-
-	createUserAndTask = async (email: string, task: ITask) => {
 		const user = await this.models.user.findOne({ email }).lean().exec();
 		if (user) {
 			return await this.createTask(user._id, task);
@@ -54,6 +41,29 @@ export class TasksRepository implements ITasksRepository {
 
 		const newUser = await this.createUser(email);
 		return await this.createTask(newUser._id, task);
+	};
+
+	createTask = async (
+		id: string | mongoose.Types.ObjectId,
+		{ nameTask, doctorName, url, byDate }: ITask
+	): Promise<
+		| (mongoose.Document<unknown, {}, IUser> &
+				IUser & {
+					_id: mongoose.Types.ObjectId;
+				})
+		| null
+	> => {
+		const taskData = byDate ? { nameTask, doctorName, url, byDate } : { nameTask, doctorName, url };
+
+		return await this.models.user
+			.findByIdAndUpdate(
+				id,
+				{
+					$push: { tasks: taskData },
+				},
+				{ new: true }
+			)
+			.lean();
 	};
 
 	findUser = async (
@@ -67,7 +77,14 @@ export class TasksRepository implements ITasksRepository {
 		return await this.models.user.findOne({ email }).lean().exec();
 	};
 
-	deleteTask = async (taskId: string) => {
+	deleteTask = async (
+		taskId: ObjectId
+	): Promise<
+		| (mongoose.FlattenMaps<IUser> & {
+				_id: mongoose.Types.ObjectId;
+		  })
+		| null
+	> => {
 		const user = await this.findUserByTaskId(taskId);
 
 		if (user && user.tasks.length === 1) {
@@ -84,7 +101,7 @@ export class TasksRepository implements ITasksRepository {
 	};
 
 	findUserByTaskId = async (
-		taskId: string
+		taskId: ObjectId
 	): Promise<
 		| (mongoose.FlattenMaps<IUser> & {
 				_id: mongoose.Types.ObjectId;

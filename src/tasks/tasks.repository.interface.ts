@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ITask, IUser } from '../models/user.model';
-import mongoose from 'mongoose';
+import mongoose, { ObjectId } from 'mongoose';
 
 export interface ITasksRepository {
 	createUserAndTask: (
@@ -35,8 +35,13 @@ export interface ITasksRepository {
 				})
 		| null
 	>;
-	deleteTask: (taskId: string) => void;
-	findUserByTaskId: (taskId: string) => Promise<
+	deleteTask: (taskId: ObjectId) => Promise<
+		| (mongoose.FlattenMaps<IUser> & {
+				_id: mongoose.Types.ObjectId;
+		  })
+		| null
+	>;
+	findUserByTaskId: (taskId: ObjectId) => Promise<
 		| (mongoose.FlattenMaps<IUser> & {
 				_id: mongoose.Types.ObjectId;
 		  })

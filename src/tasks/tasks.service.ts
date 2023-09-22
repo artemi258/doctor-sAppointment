@@ -7,6 +7,7 @@ import { ILogger } from '../logger/logger.interface';
 import { BySelectedDateDto } from './dto/task-bySelectedDate';
 import { IWaitingForCoupons } from '../utils/waitingForCoupons.interface';
 import { ITasksRepository } from './tasks.repository.interface';
+import { ObjectId } from 'mongoose';
 
 @injectable()
 export class TasksService implements ITasksService {
@@ -32,17 +33,38 @@ export class TasksService implements ITasksService {
 
 				if (taskUrl) throw new Error('Задача с таким доктором уже создана.');
 			}
-			const doctor = await this.createTaskNearestTicket({ email, url });
+
+			const page: Page = await this.browser.newPage();
+
+			await page.goto(url).catch(async () => {
+				await page.close();
+				throw new Error('Неверно указан url адрес врача или страница не доступна!');
+			});
+
+			const doctorName: string | undefined = await this.getDoctorName(page);
+
+			await page.close();
+
+			if (!doctorName) {
+				await page.close();
+				throw new Error('Неверно указан url адрес врача!');
+			}
 
 			const user = await this.tasksRepository.createUserAndTask(email, {
 				nameTask: 'nearestTicket',
-				doctorName: doctor.doctorName,
+				doctorName,
 				url,
 			});
 
-			if (doctor && user) {
-				return doctor;
+			const taskId = user?.tasks.pop()?._id;
+
+			if (taskId) {
+				const doctor = await this.createTaskNearestTicket({ email, url }, taskId);
+				if (doctor && user) {
+					return doctor;
+				}
 			}
+
 			throw new Error('Неудолось создать задачу, попробуйте в другой раз');
 		} catch (error) {
 			this.logger.error(error);
@@ -68,18 +90,35 @@ export class TasksService implements ITasksService {
 
 				if (taskUrl) throw new Error('Задача с таким доктором уже создана.');
 			}
-			const doctor = await this.createTaskBySelectedDate({ email, url, byDate });
+
+			const page: Page = await this.browser.newPage();
+
+			await page.goto(url).catch(async () => {
+				await page.close();
+				throw new Error('Неверно указан url адрес врача или страница не доступна!');
+			});
+
+			const doctorName: string | undefined = await this.getDoctorName(page);
+
+			await page.close();
 
 			const user = await this.tasksRepository.createUserAndTask(email, {
 				nameTask: 'byDateTicket',
-				doctorName: doctor.doctorName,
+				doctorName: doctorName,
 				url,
 				byDate,
 			});
 
-			if (doctor && user) {
-				return doctor;
+			const taskId = user?.tasks.pop()?._id;
+
+			if (taskId) {
+				const doctor = await this.createTaskBySelectedDate({ email, url, byDate }, taskId);
+
+				if (doctor && user) {
+					return doctor;
+				}
 			}
+
 			throw new Error('Неудолось создать задачу, попробуйте в другой раз');
 		} catch (error) {
 			this.logger.error(error);
@@ -90,59 +129,32 @@ export class TasksService implements ITasksService {
 		}
 	};
 
-	createTaskNearestTicket = async ({
-		email,
-		url,
-	}: NearestTicketDto): Promise<{ doctorName: string }> => {
-		let doctorName: string | undefined;
-
+	createTaskNearestTicket = async (
+		{ email, url }: NearestTicketDto,
+		taskId: ObjectId
+	): Promise<{ doctorName: string }> => {
 		const page: Page = await this.browser.newPage();
 
-		await page.goto(url).catch(async () => {
-			await page.close();
-			throw new Error('Неверно указан url адрес врача или страница не доступна!');
-		});
-		doctorName =
-			(await page.$$eval('.text-primary.loader-link', (link) => {
-				if (link) {
-					if (link.length < 6) return null;
-					return link.pop()?.textContent;
-				}
-			})) ?? '';
+		await page.goto(url);
 
-		if (!doctorName) {
-			await page.close();
-			throw new Error('Неверно указан url адрес врача!');
-		}
+		const doctorName: string | undefined = await this.getDoctorName(page);
 
-		this.waitingForCoupons.getCoupons(page, doctorName, email, this.logger);
+		this.waitingForCoupons.getCoupons(page, doctorName, email, this.logger, taskId);
 		return { doctorName };
 	};
 
-	createTaskBySelectedDate = async ({ email, url, byDate }: BySelectedDateDto) => {
+	createTaskBySelectedDate = async (
+		{ email, url, byDate }: BySelectedDateDto,
+		taskId: ObjectId
+	) => {
 		try {
-			let doctorName: string | undefined;
 			const page: Page = await this.browser.newPage();
 
-			await page.goto(url).catch(async () => {
-				await page.close();
-				throw new Error('Неверно указан url адрес врача или страница не доступна!');
-			});
+			await page.goto(url);
 
-			doctorName =
-				(await page.$$eval('.text-primary.loader-link', (link) => {
-					if (link) {
-						if (link.length < 6) return null;
-						return link.pop()?.textContent;
-					}
-				})) ?? '';
+			const doctorName: string | undefined = await this.getDoctorName(page);
 
-			if (!doctorName) {
-				await page.close();
-				throw new Error('Неверно указан url адрес врача!');
-			}
-
-			this.waitingForCoupons.getCouponsByDate(page, doctorName, email, byDate, this.logger);
+			this.waitingForCoupons.getCouponsByDate(page, doctorName, email, byDate, this.logger, taskId);
 
 			return { doctorName };
 		} catch (error) {
@@ -152,6 +164,17 @@ export class TasksService implements ITasksService {
 			}
 			throw new Error('Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже.');
 		}
+	};
+
+	getDoctorName = async (page: Page) => {
+		return (
+			(await page.$$eval('.text-primary.loader-link', (link) => {
+				if (link) {
+					if (link.length < 6) return null;
+					return link.pop()?.textContent;
+				}
+			})) ?? ''
+		);
 	};
 
 	initBrowser = async () => {

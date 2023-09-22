@@ -6,16 +6,22 @@ import { getDates } from '../helpers/getDates';
 import { injectable } from 'inversify';
 import { TYPES } from '../types';
 import { ISendMail } from './sendMail.interface';
+import { ObjectId } from 'mongoose';
+import { ITasksRepository } from '../tasks/tasks.repository.interface';
 
 @injectable()
 export class WaitingForCoupons implements IWaitingForCoupons {
-	constructor(@inject(TYPES.SendMail) private sendMail: ISendMail) {}
+	constructor(
+		@inject(TYPES.SendMail) private sendMail: ISendMail,
+		@inject(TYPES.TasksRepository) private tasksRepository: ITasksRepository
+	) {}
 
 	getCoupons = async (
 		page: Page,
 		doctorName: string,
 		email: string,
-		logger: ILogger
+		logger: ILogger,
+		taskId: ObjectId
 	): Promise<void> => {
 		try {
 			let numberCoupons: number = 0;
@@ -52,6 +58,7 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 
 			if (numberCoupons) {
 				await page.close();
+				this.tasksRepository.deleteTask(taskId);
 				const text = `доступен(но) ${numberCoupons} талон(a/ов)`;
 				logger.log(`${text}, Доктор: ${doctorName}`);
 				this.sendMail.sendEmail(email, { text, doctorName });
@@ -60,9 +67,11 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 					await page.reload({ timeout: 0 }).catch(async (err) => {
 						logger.error(err);
 						await page.close();
-						throw new Error();
+						this.tasksRepository.deleteTask(taskId);
+
+						throw new Error('неудолось перезагрузить страницу');
 					});
-					this.getCoupons(page, doctorName, email, logger);
+					this.getCoupons(page, doctorName, email, logger, taskId);
 				}, 1000 * 60);
 			}
 		} catch (error) {
@@ -76,7 +85,8 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 		doctorName: string,
 		email: string,
 		byDate: Date,
-		logger: ILogger
+		logger: ILogger,
+		taskId: ObjectId
 	): Promise<void> => {
 		try {
 			let numberCoupons: number = 0;
@@ -116,6 +126,8 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 
 			if (index < 0) {
 				await page.close();
+				this.tasksRepository.deleteTask(taskId);
+
 				logger.error(`выбранная дата ${byDate} прошла`);
 				const text = `<span style="color: red; margin: 0">выбранная дата ${byDate} прошла и ожидание талонов окончена</span>`;
 				this.sendMail.sendEmail(email, { text, doctorName });
@@ -133,6 +145,8 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 
 			if (numberCoupons) {
 				await page.close();
+				this.tasksRepository.deleteTask(taskId);
+
 				const text = `в период выбранной даты, появился(ось) ${numberCoupons} талон(а/ов)`;
 				logger.log(`${text}, Доктор: ${doctorName}`);
 				this.sendMail.sendEmail(email, { text, doctorName });
@@ -141,9 +155,11 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 					await page.reload({ timeout: 0 }).catch(async (err) => {
 						logger.error(err);
 						await page.close();
-						throw new Error();
+						this.tasksRepository.deleteTask(taskId);
+
+						throw new Error('неудолось перезагрузить страницу');
 					});
-					this.getCouponsByDate(page, doctorName, email, byDate, logger);
+					this.getCouponsByDate(page, doctorName, email, byDate, logger, taskId);
 				}, 1000 * 60);
 			}
 		} catch (error) {

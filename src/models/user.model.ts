@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { ObjectId, Schema, model } from 'mongoose';
 
 type task = 'nearestTicket' | 'byDateTicket';
 
@@ -7,6 +7,7 @@ export interface ITask {
 	doctorName: string;
 	url: string;
 	byDate?: Date;
+	_id?: ObjectId;
 }
 
 export interface IUser {
