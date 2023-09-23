@@ -3,6 +3,7 @@ export const submittingForm = () => {
 		loading = document.querySelector('.content__loader'),
 		loadingMessage = document.querySelector('.content__loader .content__loader-message'),
 		success = document.querySelector('.content__success'),
+		successMessage = document.querySelector('.content__success-message'),
 		error = document.querySelector('.content__error'),
 		errorMessage = document.querySelector('.content__error-message'),
 		inputEmail = document.querySelector('#email'),
@@ -76,11 +77,15 @@ export const submittingForm = () => {
 					loading.style.display = 'none';
 					success.style.display = 'flex';
 					form.reset();
+					return res.text();
 				} else {
 					return res.text().then((text) => {
 						throw new Error(text);
 					});
 				}
+			})
+			.then((res) => {
+				successMessage.textContent = `Задача с доктором ${res} создана! Как только появится талон, вам на почту придет оповещение!`;
 			})
 			.catch((err) => {
 				loading.style.display = 'none';
