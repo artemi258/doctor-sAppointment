@@ -23,8 +23,8 @@ export abstract class BaseController {
 		return this.send<T>(res, 200, message);
 	};
 
-	public created = (res: Response): ExpressReturnType => {
-		return res.sendStatus(201);
+	public created = (res: Response, doctorName: string): ExpressReturnType => {
+		return res.status(201).send(doctorName);
 	};
 
 	protected bindRoutes = (routes: IControllerRoute[]): void => {

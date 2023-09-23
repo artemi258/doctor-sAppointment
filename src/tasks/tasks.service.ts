@@ -1,118 +1,181 @@
-import { inject, injectable } from "inversify";
-import puppeteer, { Browser, Page } from "puppeteer";
-import { NearestTicketDto } from "./dto/task-nearestTicket.dto";
-import { ITasksService } from "./tasks.service.interface";
-import { TYPES } from "../types";
-import { ILogger } from "../logger/logger.interface";
-import { getCoupons } from "../utils/getCoupons";
-import { BySelectedDateDto } from "./dto/task-bySelectedDate";
-import { getCouponsByDate } from "../utils/getCouponsByDate";
+import { inject, injectable } from 'inversify';
+import puppeteer, { Browser, Page } from 'puppeteer';
+import { NearestTicketDto } from './dto/task-nearestTicket.dto';
+import { ITasksService } from './tasks.service.interface';
+import { TYPES } from '../types';
+import { ILogger } from '../logger/logger.interface';
+import { BySelectedDateDto } from './dto/task-bySelectedDate';
+import { IWaitingForCoupons } from '../utils/waitingForCoupons.interface';
+import { ITasksRepository } from './tasks.repository.interface';
+import { ObjectId } from 'mongoose';
 
 @injectable()
 export class TasksService implements ITasksService {
-  constructor(@inject(TYPES.Logger) private logger: ILogger) {}
+	browser: Browser;
+	constructor(
+		@inject(TYPES.Logger) private logger: ILogger,
+		@inject(TYPES.WaitingForCoupons) private waitingForCoupons: IWaitingForCoupons,
+		@inject(TYPES.TasksRepository) private tasksRepository: ITasksRepository
+	) {}
 
-  createTaskNearestTicket = async ({
-    email,
-    url,
-  }: NearestTicketDto): Promise<boolean> => {
-    try {
-      let doctorName: string | undefined;
-      const options = process.env.NODE_ENV
-        ? undefined
-        : {
-            executablePath: "/usr/bin/chromium-browser",
-            args: ["--no-sandbox"],
-          };
-      const browser: Browser = await puppeteer.launch(options);
-      const page: Page = await browser.newPage();
+	createTaskNearestTicketServise = async ({ email, url }: NearestTicketDto): Promise<string> => {
+		try {
+			const existUser = await this.tasksRepository.findUser(email);
+			if (existUser) {
+				const taskUrl = existUser.tasks.find(
+					(elem) => elem.url === url && elem.nameTask === 'nearestTicket'
+				);
 
-      await page.goto(url).catch(async () => {
-        await browser.close();
-        throw new Error("url");
-      });
+				if (taskUrl) throw new Error('Задача с таким доктором уже создана.');
+			}
 
-      doctorName =
-        (await page.$$eval(".text-primary.loader-link", (link) => {
-          if (link) {
-            if (link.length < 6) return null;
-            return link.pop()?.textContent;
-          }
-        })) ?? "";
+			const page: Page = await this.browser.newPage();
 
-      if (!doctorName) {
-        await browser.close();
-        throw new Error("доктор");
-      }
+			await page.goto(url).catch(async () => {
+				await page.close();
+				throw new Error('Неверно указан url адрес врача или страница не доступна!');
+			});
 
-      getCoupons(page, browser, doctorName, email, this.logger);
-      return true;
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message === "доктор") {
-          throw new Error("неверно указан url адрес врача!");
-        } else {
-          throw new Error(
-            "неверно указан url адрес врача или страница не доступна!"
-          );
-        }
-      }
-      throw new Error(
-        "Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже."
-      );
-    }
-  };
+			const doctorName: string | undefined = await this.getDoctorName(page);
 
-  createTaskBySelectedDate = async ({
-    email,
-    url,
-    byDate,
-  }: BySelectedDateDto) => {
-    try {
-      let doctorName: string | undefined;
-      const options = process.env.NODE_ENV
-        ? undefined
-        : {
-            executablePath: "/usr/bin/chromium-browser",
-            args: ["--no-sandbox"],
-          };
-      const browser: Browser = await puppeteer.launch(options);
-      const page: Page = await browser.newPage();
+			await page.close();
 
-      await page.goto(url).catch(async () => {
-        await browser.close();
-        throw new Error("url");
-      });
+			if (!doctorName) {
+				throw new Error('Неверно указан url адрес врача!');
+			}
 
-      doctorName =
-        (await page.$$eval(".text-primary.loader-link", (link) => {
-          if (link) {
-            if (link.length < 6) return null;
-            return link.pop()?.textContent;
-          }
-        })) ?? "";
+			const user = await this.tasksRepository.createUserAndTask(email, {
+				nameTask: 'nearestTicket',
+				doctorName,
+				url,
+			});
 
-      if (!doctorName) {
-        await browser.close();
-        throw new Error("доктор");
-      }
+			const taskId = user?.tasks.pop()?._id;
 
-      getCouponsByDate(page, browser, doctorName, email, byDate, this.logger);
+			if (taskId) {
+				const doctor = await this.createTaskNearestTicket({ email, url }, doctorName, taskId);
+				if (doctor && user) {
+					return doctorName;
+				}
+			}
 
-      return true;
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message === "доктор") {
-          throw new Error("неверно указан url адрес врача!");
-        } else {
-          throw new Error(
-            "неверно указан url адрес врача или страница не доступна!"
-          );
-        }
-      }
-      throw new Error(
-        "Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже."
-      );
-    }
-  };
+			throw new Error('Неудолось создать задачу, попробуйте в другой раз');
+		} catch (error) {
+			this.logger.error(error);
+			if (error instanceof Error) {
+				throw new Error(error.message);
+			}
+			throw new Error('Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже.');
+		}
+	};
+	createTaskBySelectedDateServise = async ({
+		email,
+		url,
+		byDate,
+	}: BySelectedDateDto): Promise<string> => {
+		try {
+			const existUser = await this.tasksRepository.findUser(email);
+			if (existUser) {
+				const taskUrl = existUser.tasks.find(
+					(elem) => elem.url === url && elem.nameTask === 'byDateTicket'
+				);
+
+				if (taskUrl) throw new Error('Задача с таким доктором уже создана.');
+			}
+
+			const page: Page = await this.browser.newPage();
+
+			await page.goto(url).catch(async () => {
+				await page.close();
+				throw new Error('Неверно указан url адрес врача или страница не доступна!');
+			});
+
+			const doctorName: string | undefined = await this.getDoctorName(page);
+
+			await page.close();
+
+			if (!doctorName) {
+				throw new Error('Неверно указан url адрес врача!');
+			}
+
+			const user = await this.tasksRepository.createUserAndTask(email, {
+				nameTask: 'byDateTicket',
+				doctorName: doctorName,
+				url,
+				byDate,
+			});
+
+			const taskId = user?.tasks.pop()?._id;
+
+			if (taskId) {
+				const doctor = await this.createTaskBySelectedDate(
+					{ email, url, byDate },
+					doctorName,
+					taskId
+				);
+
+				if (doctor && user) {
+					return doctorName;
+				}
+			}
+
+			throw new Error('Неудолось создать задачу, попробуйте в другой раз');
+		} catch (error) {
+			this.logger.error(error);
+			if (error instanceof Error) {
+				throw new Error(error.message);
+			}
+			throw new Error('Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже.');
+		}
+	};
+
+	createTaskNearestTicket = async (
+		{ email, url }: NearestTicketDto,
+		doctorName: string,
+		taskId: ObjectId
+	): Promise<boolean> => {
+		const page: Page = await this.browser.newPage();
+
+		await page.goto(url);
+
+		this.waitingForCoupons.getCoupons(page, doctorName, email, this.logger, taskId);
+		this.logger.log(`емаил: ${email} ФИО: ${doctorName} - задача создана`);
+
+		return true;
+	};
+
+	createTaskBySelectedDate = async (
+		{ email, url, byDate }: BySelectedDateDto,
+		doctorName: string,
+		taskId: ObjectId
+	): Promise<boolean> => {
+		const page: Page = await this.browser.newPage();
+
+		await page.goto(url);
+
+		this.waitingForCoupons.getCouponsByDate(page, doctorName, email, byDate, this.logger, taskId);
+		this.logger.log(`емаил: ${email} ФИО доктора: ${doctorName} - задача создана по ${byDate}`);
+		return true;
+	};
+
+	getDoctorName = async (page: Page): Promise<string> => {
+		return (
+			(await page.$$eval('.text-primary.loader-link', (link) => {
+				if (link) {
+					if (link.length < 6) return null;
+					return link.pop()?.textContent;
+				}
+			})) ?? ''
+		);
+	};
+
+	initBrowser = async (): Promise<void> => {
+		const options = process.env.NODE_ENV
+			? undefined
+			: {
+					args: ['--no-sandbox'],
+					executablePath: '../usr/bin/chromium-browser',
+			  };
+		this.browser = await puppeteer.launch(options);
+	};
 }

@@ -1,5 +1,5 @@
 /node_modules
 /dist
 /.cache
-/.prettierrc
-/nodemon.json
+/.env
+/mongo-data
