@@ -42,12 +42,9 @@ export class TasksController extends BaseController implements ITasksController 
 		this.tasksService
 			.createTaskNearestTicketServise(body)
 			.then((result) => {
-				this.loggerService.log(
-					`емаил: ${body.email} ФИО доктора: ${result.doctorName} - задача создана`
-				);
 				const mem = Math.round((os.freemem() / os.totalmem()) * 100);
 				this.loggerService.log(`осталось свободной памяти: ${mem}%`);
-				this.created(res, result.doctorName);
+				this.created(res, result);
 			})
 			.catch((err) => {
 				next(err);
@@ -61,12 +58,9 @@ export class TasksController extends BaseController implements ITasksController 
 		this.tasksService
 			.createTaskBySelectedDateServise(body)
 			.then((result) => {
-				this.loggerService.log(
-					`емаил: ${body.email} ФИО доктора: ${result.doctorName} - задача создана по ${body.byDate}`
-				);
 				const mem = Math.round((os.freemem() / os.totalmem()) * 100);
 				this.loggerService.log(`осталось свободной памяти: ${mem}%`);
-				this.created(res, result.doctorName);
+				this.created(res, result);
 			})
 			.catch((err) => {
 				next(err);

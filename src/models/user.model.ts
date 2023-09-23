@@ -7,7 +7,7 @@ export interface ITask {
 	doctorName: string;
 	url: string;
 	byDate?: Date;
-	_id?: ObjectId;
+	_id: ObjectId;
 }
 
 export interface IUser {

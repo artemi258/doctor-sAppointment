@@ -18,12 +18,7 @@ export class TasksService implements ITasksService {
 		@inject(TYPES.TasksRepository) private tasksRepository: ITasksRepository
 	) {}
 
-	createTaskNearestTicketServise = async ({
-		email,
-		url,
-	}: NearestTicketDto): Promise<{
-		doctorName: string;
-	}> => {
+	createTaskNearestTicketServise = async ({ email, url }: NearestTicketDto): Promise<string> => {
 		try {
 			const existUser = await this.tasksRepository.findUser(email);
 			if (existUser) {
@@ -46,7 +41,6 @@ export class TasksService implements ITasksService {
 			await page.close();
 
 			if (!doctorName) {
-				await page.close();
 				throw new Error('Неверно указан url адрес врача!');
 			}
 
@@ -59,9 +53,9 @@ export class TasksService implements ITasksService {
 			const taskId = user?.tasks.pop()?._id;
 
 			if (taskId) {
-				const doctor = await this.createTaskNearestTicket({ email, url }, taskId);
+				const doctor = await this.createTaskNearestTicket({ email, url }, doctorName, taskId);
 				if (doctor && user) {
-					return doctor;
+					return doctorName;
 				}
 			}
 
@@ -78,9 +72,7 @@ export class TasksService implements ITasksService {
 		email,
 		url,
 		byDate,
-	}: BySelectedDateDto): Promise<{
-		doctorName: string;
-	}> => {
+	}: BySelectedDateDto): Promise<string> => {
 		try {
 			const existUser = await this.tasksRepository.findUser(email);
 			if (existUser) {
@@ -102,6 +94,10 @@ export class TasksService implements ITasksService {
 
 			await page.close();
 
+			if (!doctorName) {
+				throw new Error('Неверно указан url адрес врача!');
+			}
+
 			const user = await this.tasksRepository.createUserAndTask(email, {
 				nameTask: 'byDateTicket',
 				doctorName: doctorName,
@@ -112,10 +108,14 @@ export class TasksService implements ITasksService {
 			const taskId = user?.tasks.pop()?._id;
 
 			if (taskId) {
-				const doctor = await this.createTaskBySelectedDate({ email, url, byDate }, taskId);
+				const doctor = await this.createTaskBySelectedDate(
+					{ email, url, byDate },
+					doctorName,
+					taskId
+				);
 
 				if (doctor && user) {
-					return doctor;
+					return doctorName;
 				}
 			}
 
@@ -131,42 +131,34 @@ export class TasksService implements ITasksService {
 
 	createTaskNearestTicket = async (
 		{ email, url }: NearestTicketDto,
+		doctorName: string,
 		taskId: ObjectId
-	): Promise<{ doctorName: string }> => {
+	): Promise<boolean> => {
 		const page: Page = await this.browser.newPage();
 
 		await page.goto(url);
 
-		const doctorName: string | undefined = await this.getDoctorName(page);
-
 		this.waitingForCoupons.getCoupons(page, doctorName, email, this.logger, taskId);
-		return { doctorName };
+		this.logger.log(`емаил: ${email} ФИО: ${doctorName} - задача создана`);
+
+		return true;
 	};
 
 	createTaskBySelectedDate = async (
 		{ email, url, byDate }: BySelectedDateDto,
+		doctorName: string,
 		taskId: ObjectId
-	) => {
-		try {
-			const page: Page = await this.browser.newPage();
+	): Promise<boolean> => {
+		const page: Page = await this.browser.newPage();
 
-			await page.goto(url);
+		await page.goto(url);
 
-			const doctorName: string | undefined = await this.getDoctorName(page);
-
-			this.waitingForCoupons.getCouponsByDate(page, doctorName, email, byDate, this.logger, taskId);
-
-			return { doctorName };
-		} catch (error) {
-			this.logger.error(error);
-			if (error instanceof Error) {
-				throw new Error(error.message);
-			}
-			throw new Error('Произошла ошибка на стороне сервера, попробуйте еще раз чуть позже.');
-		}
+		this.waitingForCoupons.getCouponsByDate(page, doctorName, email, byDate, this.logger, taskId);
+		this.logger.log(`емаил: ${email} ФИО доктора: ${doctorName} - задача создана по ${byDate}`);
+		return true;
 	};
 
-	getDoctorName = async (page: Page) => {
+	getDoctorName = async (page: Page): Promise<string> => {
 		return (
 			(await page.$$eval('.text-primary.loader-link', (link) => {
 				if (link) {
@@ -177,7 +169,7 @@ export class TasksService implements ITasksService {
 		);
 	};
 
-	initBrowser = async () => {
+	initBrowser = async (): Promise<void> => {
 		const options = process.env.NODE_ENV
 			? undefined
 			: {

@@ -5,7 +5,7 @@ import mongoose, { ObjectId } from 'mongoose';
 export interface ITasksRepository {
 	createUserAndTask: (
 		email: string,
-		task: ITask
+		task: Omit<ITask, '_id'>
 	) => Promise<
 		| (mongoose.Document<unknown, {}, IUser> &
 				IUser & {
@@ -27,7 +27,7 @@ export interface ITasksRepository {
 	>;
 	createTask: (
 		id: string,
-		task: ITask
+		task: Omit<ITask, '_id'>
 	) => Promise<
 		| (mongoose.Document<unknown, {}, IUser> &
 				IUser & {
@@ -46,5 +46,11 @@ export interface ITasksRepository {
 				_id: mongoose.Types.ObjectId;
 		  })
 		| null
+	>;
+
+	findAllUsers: () => Promise<
+		(mongoose.FlattenMaps<IUser> & {
+			_id: mongoose.Types.ObjectId;
+		})[]
 	>;
 }

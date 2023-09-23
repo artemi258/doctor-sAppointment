@@ -4,14 +4,10 @@ import { ITasksRepository } from './tasks.repository.interface';
 import { TYPES } from '../types';
 import { ITask, IUser } from '../models/user.model';
 import { IMainClassModel } from '../models/mainClassModel.interface';
-import { ILogger } from '../logger/logger.interface';
 
 @injectable()
 export class TasksRepository implements ITasksRepository {
-	constructor(
-		@inject(TYPES.MainClassModel) private models: IMainClassModel,
-		@inject(TYPES.Logger) private logger: ILogger
-	) {}
+	constructor(@inject(TYPES.MainClassModel) private models: IMainClassModel) {}
 
 	createUser = async (
 		email: string
@@ -26,7 +22,7 @@ export class TasksRepository implements ITasksRepository {
 
 	createUserAndTask = async (
 		email: string,
-		task: ITask
+		task: Omit<ITask, '_id'>
 	): Promise<
 		| (mongoose.Document<unknown, {}, IUser> &
 				IUser & {
@@ -45,7 +41,7 @@ export class TasksRepository implements ITasksRepository {
 
 	createTask = async (
 		id: string | mongoose.Types.ObjectId,
-		{ nameTask, doctorName, url, byDate }: ITask
+		{ nameTask, doctorName, url, byDate }: Omit<ITask, '_id'>
 	): Promise<
 		| (mongoose.Document<unknown, {}, IUser> &
 				IUser & {
@@ -75,6 +71,14 @@ export class TasksRepository implements ITasksRepository {
 		| null
 	> => {
 		return await this.models.user.findOne({ email }).lean().exec();
+	};
+
+	findAllUsers = async (): Promise<
+		(mongoose.FlattenMaps<IUser> & {
+			_id: mongoose.Types.ObjectId;
+		})[]
+	> => {
+		return await this.models.user.find({}).lean().exec();
 	};
 
 	deleteTask = async (
