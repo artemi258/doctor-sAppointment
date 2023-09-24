@@ -1,0 +1,31 @@
+@media (320px <= width < 768px) {
+	body {
+		padding: 0 10px;
+	}
+	.title {
+		font-size: 25px;
+	}
+	.content {
+		width: 300px;
+		&__input {
+			label {
+				font-size: 16px;
+			}
+			&-tooltipUrl {
+				display: none;
+			}
+			&-tooltipDate {
+				display: none;
+				position: static;
+				width: 100%;
+				margin-top: 5px;
+				&::after {
+					content: none;
+				}
+			}
+			&:focus-within .content__input-tooltipDate {
+				display: block;
+			}
+		}
+	}
+}
