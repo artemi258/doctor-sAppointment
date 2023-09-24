@@ -2,7 +2,6 @@
 @import './content';
 @import './title';
 @import './connection';
-@import './media';
 
 * {
 	box-sizing: border-box;
@@ -11,3 +10,5 @@ body {
 	width: 100vw;
 	height: 100vh;
 }
+
+@import './media';
