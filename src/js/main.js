@@ -1,4 +1,3 @@
-import { dateRestriction } from './modules/dateRestriction';
 import { submittingForm } from './modules/submittingForm';
 import { validate } from '../utils/validate';
 import { isCheckboxByDate } from './modules/isCheckboxByDate';
@@ -10,7 +9,6 @@ import { calendar } from './modules/calendar';
 process.env.NODE_ENV === 'production' ? yandexMetrika() : null;
 
 window.addEventListener('DOMContentLoaded', () => {
-  // dateRestriction();
   submittingForm();
   validate();
   isCheckboxByDate();
