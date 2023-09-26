@@ -44,13 +44,12 @@ export const submittingForm = () => {
     loadingMessage.textContent = 'бегу создавать задачу...';
 
     if (dateActive) {
-      console.log(dateActive.getAttribute('data-date'));
       obj = {
         email: formData.get('email'),
         url: formData.get('url'),
         byDate: dateActive.getAttribute('data-date'),
       };
-      //   url = 'https://server.notificationofcoupons.site/api/tasks/bySelectedDate';
+      url = 'https://server.notificationofcoupons.site/api/tasks/bySelectedDate';
     } else {
       obj = {
         email: formData.get('email'),
