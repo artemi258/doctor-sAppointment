@@ -1,15 +1,12 @@
 export const isCheckboxByDate = () => {
-	const checkbox = document.querySelector('#byDate'),
-		labelDate = document.querySelector('[data-date]'),
-		inputDate = document.querySelector('#date');
+  const checkbox = document.querySelector('#byDate'),
+    dates = document.querySelector('.calendar');
 
-	checkbox.addEventListener('change', () => {
-		if (checkbox.checked) {
-			labelDate.disabled = '';
-			inputDate.disabled = '';
-		} else {
-			inputDate.disabled = 'disabled';
-			labelDate.disabled = 'disabled';
-		}
-	});
+  checkbox.addEventListener('change', () => {
+    if (checkbox.checked) {
+      dates.style.display = 'grid';
+    } else {
+      dates.style.display = 'none';
+    }
+  });
 };

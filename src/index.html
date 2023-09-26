@@ -1,130 +1,128 @@
 <!DOCTYPE html>
 <html lang="ru">
-	<head>
-		<link rel="icon" href="./assets/favicon/favicon.ico" type="image/x-icon" />
-		<meta
-			name="keywords"
-			content="запись к врачу, доктору, https://rish.registratura96.ru, записаться к врачу, записаться"
-		/>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Запись к врачу</title>
-	</head>
-	<body>
-		<noscript
-			><div>
-				<img
-					src="https://mc.yandex.ru/watch/94775701"
-					style="position: absolute; left: -9999px"
-					alt=""
-				/></div
-		></noscript>
-		<h1 class="title">
-			Приложение для отслеживания появления талонов на сайте <span>rish.registratura96.ru</span>
-		</h1>
-		<p class="connection">
-			Если будут какие либо баги, недочеты пишите на почту
-			<a class="connection__link" href="mailto:notificationOfCoupons@yandex.ru"
-				>notificationOfCoupons@yandex.ru</a
-			>
-			постараюсь исправить.
-		</p>
-		<main class="content">
-			<form class="content__form">
-				<div class="content__wrapper">
-					<div class="content__input">
-						<input required placeholder="example@yandex.ru" name="email" id="email" type="email" />
-						<label class="content__input-label" for="email">адрес вашей электронной почты</label>
-						<span id="errorEmail"
-							>латиница, может включать цифры и спецсимволы вроде дефиса, обязательно должна быть
-							«собака» (@) и точка после неё, но перед точкой обязательно должны быть буквы</span
-						>
-					</div>
+  <head>
+    <link rel="icon" href="./assets/favicon/favicon.ico" type="image/x-icon" />
+    <meta
+      name="keywords"
+      content="запись к врачу, доктору, https://rish.registratura96.ru, записаться к врачу, записаться, регистратура, регистратура96"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Запись к врачу</title>
+  </head>
+  <body>
+    <noscript
+      ><div>
+        <img
+          src="https://mc.yandex.ru/watch/94775701"
+          style="position: absolute; left: -9999px"
+          alt=""
+        /></div
+    ></noscript>
+    <h1 class="title">
+      Приложение для отслеживания появления талонов на сайте <span>rish.registratura96.ru</span>
+    </h1>
+    <p class="connection">
+      Если будут какие либо баги, недочеты пишите на почту
+      <a class="connection__link" href="mailto:notificationOfCoupons@yandex.ru"
+        >notificationOfCoupons@yandex.ru</a
+      >
+      постараюсь исправить.
+    </p>
+    <main class="content">
+      <form class="content__form">
+        <div class="content__wrapper">
+          <div class="content__input">
+            <input required placeholder="example@yandex.ru" name="email" id="email" type="email" />
+            <label class="content__input-label" for="email">адрес вашей электронной почты</label>
+            <span id="errorEmail"
+              >латиница, может включать цифры и спецсимволы вроде дефиса, обязательно должна быть
+              «собака» (@) и точка после неё, но перед точкой обязательно должны быть буквы</span
+            >
+          </div>
 
-					<div class="content__input">
-						<input
-							required
-							placeholder="https://rish.registratura96.ru/DayInfo?CityId=city36&OrgId=13003729&DepId=99560003239&ServId=Фельдшер%20участковый&DocId=63013"
-							name="url"
-							id="url"
-							type="text"
-						/>
-						<label class="content__input-label" class="content__input-label" for="url"
-							>url адрес врача</label
-						>
-						<span id="errorUrl"
-							>нужно перейти на
-							<a target="_blank" href="https://rish.registratura96.ru"
-								>https://rish.registratura96.ru</a
-							>, выбрать нужного врача(кликнуть на его ФИО) и скопировать его url адрес как показано
-							на примере справа. Пример url адреса:
-							<a
-								target="_blank"
-								href="https://registratura196.ru/DayInfo?CityId=city36&OrgId=13003729&DepId=99560003239&ServId=Фельдшер%20участковый&DocId=63013"
-								>https://registratura196.ru/DayInfo?CityId=city36&OrgId=13003729&DepId=99560003239&ServId=Фельдшер%20участковый&DocId=63013</a
-							></span
-						>
-						<div class="content__input-tooltipUrl">
-							<div class="content__input-tooltipUrl_img">
-								<img src="./assets/img/url.png" alt="сайт с url адресом" />
-							</div>
-							<p class="content__input-tooltipUrl_desc">
-								Зайдите на страницу нужного вам доктора и скопируйте его url адрес.
-							</p>
-						</div>
-					</div>
-					<div class="content__byDate">
-						<input name="byDate" id="byDate" type="checkbox" />
-						<label for="byDate">проверять талон до определенной даты?</label>
-					</div>
-					<div class="content__input">
-						<input disabled="disabled" name="date" id="date" type="date" />
-						<label class="content__input-label" data-date for="date"
-							>до какой даты проверять талон</label
-						>
-						<div class="content__input-tooltipDate">
-							<p class="content__input-tooltipDate_desc"></p>
-						</div>
-					</div>
-					<!-- <div class="content__check">
-						<div class="content__check-text">Проверять наличие талонов один раз в:</div>
-						<div class="content__check-wrap">
-							<label tabindex="0" for="one"
-								><input value="60" name="check" type="radio" id="one" /> 1 минуту</label
-							>
-							<label tabindex="0" for="five"
-								><input value="300" name="check" type="radio" id="five" /> 5 минут</label
-							>
-							<label tabindex="0" for="fifteen"
-								><input value="900" name="check" type="radio" id="fifteen" /> 15 минут</label
-							>
-							<label tabindex="0" for="thirty"
-								><input tabindex="-1" value="1800" checked name="check" type="radio" id="thirty" />
-								30 минут</label
-							>
-						</div>
-					</div> -->
-				</div>
-				<div class="content__loader">
-					<div class="content__loader-gif">
-						<img src="./assets/gif/loading.gif" alt="загрузка" />
-					</div>
-					<div class="content__loader-message"></div>
-				</div>
-				<div class="content__success">
-					<div class="content__success-img">
-						<img src="./assets/icons/success.png" alt="успешно" />
-					</div>
-					<div class="content__success-message"></div>
-				</div>
-				<div class="content__error">
-					<div class="content__error-img">
-						<img src="./assets/icons/error.png" alt="ошибка" />
-					</div>
-					<div class="content__error-message"></div>
-				</div>
-				<button class="content__button">создать</button>
-			</form>
-		</main>
-	</body>
+          <div class="content__input">
+            <input
+              required
+              placeholder="https://rish.registratura96.ru/DayInfo?CityId=city36&OrgId=13003729&DepId=99560003239&ServId=Фельдшер%20участковый&DocId=63013"
+              name="url"
+              id="url"
+              type="text"
+            />
+            <label class="content__input-label" class="content__input-label" for="url"
+              >url адрес врача</label
+            >
+            <span id="errorUrl"
+              >нужно перейти на
+              <a target="_blank" href="https://rish.registratura96.ru"
+                >https://rish.registratura96.ru</a
+              >, выбрать нужного врача(кликнуть на его ФИО) и скопировать его url адрес как показано
+              на примере справа. Пример url адреса:
+              <a
+                target="_blank"
+                href="https://registratura196.ru/DayInfo?CityId=city36&OrgId=13003729&DepId=99560003239&ServId=Фельдшер%20участковый&DocId=63013"
+                >https://registratura196.ru/DayInfo?CityId=city36&OrgId=13003729&DepId=99560003239&ServId=Фельдшер%20участковый&DocId=63013</a
+              ></span
+            >
+            <div class="content__input-tooltipUrl">
+              <div class="content__input-tooltipUrl_img">
+                <img src="./assets/img/url.png" alt="сайт с url адресом" />
+              </div>
+              <p class="content__input-tooltipUrl_desc">
+                Зайдите на страницу нужного вам доктора и скопируйте его url адрес.
+              </p>
+            </div>
+          </div>
+          <div class="content__byDate">
+            <input name="byDate" id="byDate" type="checkbox" />
+            <label for="byDate">проверять талон до определенной даты?</label>
+          </div>
+          <div class="calendar">
+            <p class="calendar__desc"></p>
+            <div class="calendar__header">
+              <button type="button" id="arrowPrev" class="calendar__nav">
+                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 256 512">
+                  <path
+                    d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"
+                  />
+                </svg>
+              </button>
+              <div class="calendar__month">
+                <span class="calendar__month-name">January</span>
+                <span class="calendar__month-year">2019</span>
+              </div>
+              <button type="button" id="arrowNext" class="calendar__nav">
+                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 256 512">
+                  <path
+                    d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div class="calendar__days"></div>
+            <div class="calendar__dates"></div>
+          </div>
+        </div>
+        <div class="content__loader">
+          <div class="content__loader-gif">
+            <img src="./assets/gif/loading.gif" alt="загрузка" />
+          </div>
+          <div class="content__loader-message"></div>
+        </div>
+        <div class="content__success">
+          <div class="content__success-img">
+            <img src="./assets/icons/success.png" alt="успешно" />
+          </div>
+          <div class="content__success-message"></div>
+        </div>
+        <div class="content__error">
+          <div class="content__error-img">
+            <img src="./assets/icons/error.png" alt="ошибка" />
+          </div>
+          <div class="content__error-message"></div>
+        </div>
+        <button class="content__button">создать</button>
+      </form>
+    </main>
+  </body>
 </html>

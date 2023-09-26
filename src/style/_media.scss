@@ -1,31 +1,68 @@
 @media (width < 768px) {
-	body {
-		padding: 0 10px;
-	}
-	.title {
-		font-size: 25px;
-	}
-	.content {
-		width: 300px;
-		&__input {
-			&-label {
-				font-size: 13px;
-			}
-			&-tooltipUrl {
-				display: none;
-			}
-			&-tooltipDate {
-				display: none;
-				position: static;
-				width: 100%;
-				margin-top: 5px;
-				&::after {
-					content: none;
-				}
-			}
-			&:focus-within .content__input-tooltipDate {
-				display: block;
-			}
-		}
-	}
+  body {
+    padding: 0 10px;
+  }
+  .title {
+    font-size: 25px;
+  }
+  .content {
+    width: 300px;
+    &__input {
+      &-label {
+        font-size: 13px;
+      }
+      &-tooltipUrl {
+        display: none;
+      }
+      &-tooltipDate {
+        display: none;
+        position: static;
+        width: 100%;
+        margin-top: 5px;
+        &::after {
+          content: none;
+        }
+      }
+      &:focus-within .content__input-tooltipDate {
+        display: block;
+      }
+    }
+  }
+  .calendar {
+    padding: 5px;
+    grid-template-columns: 100%;
+    &__desc {
+      font-size: 16px;
+    }
+    &__header {
+      margin-bottom: 10px;
+    }
+    &__days {
+      span {
+        width: 30px;
+      }
+    }
+    &__dates {
+      &-today {
+        box-shadow: inset 0px 0px 0px 2px #0a3d62;
+      }
+      button {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+      }
+    }
+  }
+}
+@media (hover: none) and (pointer: coarse) {
+  .calendar {
+    &__nav {
+      &:hover {
+        background: none;
+      }
+      &:active {
+        background: #eee;
+      }
+    }
+  }
 }
