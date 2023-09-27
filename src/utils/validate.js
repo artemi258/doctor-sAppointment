@@ -7,7 +7,7 @@ export const validate = () => {
   inputEmail.addEventListener('input', (e) => {
     const value = e.target.value;
 
-    if (/^[\w-]+@[\w]+\.[A-Za-z]{2,}$/i.test(value)) {
+    if (/^[\w-\.]+@[\w]+\.[A-Za-z]{2,}$/i.test(value)) {
       inputEmail.style.border = '1px green solid';
       inputEmail.style.boxShadow = '1px 1px 10px 1px green';
       inputEmailSpan.style.display = 'none';
