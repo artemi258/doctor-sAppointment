@@ -138,7 +138,7 @@ export class TasksService implements ITasksService {
 
 		await page.goto(url);
 
-		this.waitingForCoupons.getCoupons(page, doctorName, email, this.logger, taskId);
+		this.waitingForCoupons.getCoupons(page, doctorName, email, url, this.logger, taskId);
 		this.logger.log(`емаил: ${email} ФИО: ${doctorName} - задача создана`);
 
 		return true;
@@ -153,7 +153,15 @@ export class TasksService implements ITasksService {
 
 		await page.goto(url);
 
-		this.waitingForCoupons.getCouponsByDate(page, doctorName, email, byDate, this.logger, taskId);
+		this.waitingForCoupons.getCouponsByDate(
+			page,
+			doctorName,
+			email,
+			url,
+			byDate,
+			this.logger,
+			taskId
+		);
 		this.logger.log(`емаил: ${email} ФИО доктора: ${doctorName} - задача создана по ${byDate}`);
 		return true;
 	};

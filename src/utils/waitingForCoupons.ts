@@ -20,6 +20,7 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 		page: Page,
 		doctorName: string,
 		email: string,
+		url: string,
 		logger: ILogger,
 		taskId: ObjectId
 	): Promise<void> => {
@@ -58,32 +59,33 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 
 			if (numberCoupons) {
 				await page.close();
-				this.tasksRepository.deleteTask(taskId);
+				await this.tasksRepository.deleteTask(taskId);
 				const text = `доступен(но) ${numberCoupons} талон(a/ов)`;
 				logger.log(`${text}, Доктор: ${doctorName}`);
-				this.sendMail.sendEmail(email, { text, doctorName });
+				this.sendMail.sendEmail(email, { text, doctorName, url });
 			} else {
 				setTimeout(async () => {
 					await page.reload({ timeout: 0 }).catch(async (err) => {
 						logger.error(err);
 						await page.close();
-						this.tasksRepository.deleteTask(taskId);
+						await this.tasksRepository.deleteTask(taskId);
 
 						throw new Error('неудолось перезагрузить страницу');
 					});
-					this.getCoupons(page, doctorName, email, logger, taskId);
+					this.getCoupons(page, doctorName, email, url, logger, taskId);
 				}, 1000 * 60);
 			}
 		} catch (error) {
 			const text =
 				'<span style="color: red; margin: 0">Возникла ошибка при ожидании талона или врач убран из списка</span>';
-			this.sendMail.sendEmail(email, { text, doctorName });
+			this.sendMail.sendEmail(email, { text, doctorName, url });
 		}
 	};
 	getCouponsByDate = async (
 		page: Page,
 		doctorName: string,
 		email: string,
+		url: string,
 		byDate: Date,
 		logger: ILogger,
 		taskId: ObjectId
@@ -126,11 +128,11 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 
 			if (index < 0) {
 				await page.close();
-				this.tasksRepository.deleteTask(taskId);
+				await this.tasksRepository.deleteTask(taskId);
 
 				logger.error(`выбранная дата ${byDate} прошла`);
 				const text = `<span style="color: red; margin: 0">выбранная дата ${byDate} прошла и ожидание талонов окончена</span>`;
-				this.sendMail.sendEmail(email, { text, doctorName });
+				this.sendMail.sendEmail(email, { text, doctorName, url });
 				return;
 			}
 
@@ -145,26 +147,26 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 
 			if (numberCoupons) {
 				await page.close();
-				this.tasksRepository.deleteTask(taskId);
+				await this.tasksRepository.deleteTask(taskId);
 
 				const text = `в период выбранной даты, появился(ось) ${numberCoupons} талон(а/ов)`;
 				logger.log(`${text}, Доктор: ${doctorName}`);
-				this.sendMail.sendEmail(email, { text, doctorName });
+				this.sendMail.sendEmail(email, { text, doctorName, url });
 			} else {
 				setTimeout(async () => {
 					await page.reload({ timeout: 0 }).catch(async (err) => {
 						logger.error(err);
 						await page.close();
-						this.tasksRepository.deleteTask(taskId);
+						await this.tasksRepository.deleteTask(taskId);
 
 						throw new Error('неудолось перезагрузить страницу');
 					});
-					this.getCouponsByDate(page, doctorName, email, byDate, logger, taskId);
+					this.getCouponsByDate(page, doctorName, email, url, byDate, logger, taskId);
 				}, 1000 * 60);
 			}
 		} catch (error) {
 			const text = `<span style="color: red; margin: 0">Возникла ошибка при ожидании талона или врач убран из списка</span>`;
-			this.sendMail.sendEmail(email, { text, doctorName });
+			this.sendMail.sendEmail(email, { text, doctorName, url });
 		}
 	};
 }
