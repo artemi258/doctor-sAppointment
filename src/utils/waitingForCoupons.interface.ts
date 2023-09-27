@@ -7,6 +7,7 @@ export interface IWaitingForCoupons {
 		page: Page,
 		doctorName: string,
 		email: string,
+		url: string,
 		logger: ILogger,
 		taskId: ObjectId
 	) => void;
@@ -14,6 +15,7 @@ export interface IWaitingForCoupons {
 		page: Page,
 		doctorName: string,
 		email: string,
+		url: string,
 		byDate: Date,
 		logger: ILogger,
 		taskId: ObjectId

@@ -28,6 +28,7 @@ export class SendMail implements ISendMail {
 			to: `${email}`,
 			subject: 'Сообщение о появлении талонов',
 			html: `<strong>Доктор</strong>: ${data.doctorName}<br/>
+				   <strong>URL</strong>: <a href=${data.url}>${data.url}</a><br/>
                    <strong>Талоны</strong>: ${data.text}`,
 		});
 	};
