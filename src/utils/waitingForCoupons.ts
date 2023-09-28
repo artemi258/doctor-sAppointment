@@ -122,10 +122,11 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 				date = [...date, ...filteringFutureTwo.future];
 			}
 
-			date.length = 14;
+			date.length = new Date(+new Date(`${byDate}T23:59:59`) - +new Date()).getDate();
 
 			const index = date.findIndex((date) => date === byDate);
-
+			logger.log(index);
+			logger.log(date);
 			if (index < 0) {
 				await page.close();
 				await this.tasksRepository.deleteTask(taskId);
@@ -137,8 +138,9 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 			}
 
 			date = date.slice(0, index + 1);
-
+			logger.log(date);
 			arrTitle.length = date.length;
+			logger.log(arrTitle);
 
 			arrTitle.forEach((item) => {
 				const num = +item.slice(-1);
