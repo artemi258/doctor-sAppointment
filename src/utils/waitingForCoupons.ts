@@ -150,7 +150,7 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 			arrTitle.length = date.length;
 
 			arrTitle.forEach((item) => {
-				const num = +item.slice(-1);
+				const num = +item.slice(-1) || 0;
 				if (num) numberCoupons += num;
 			});
 
