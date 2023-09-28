@@ -11,7 +11,7 @@ export const calendar = () => {
     currentDate = new Date().getDate(),
     nextMonth = new Date().setMonth(date.getMonth() + 1),
     firstDayWeek = new Date(date.getFullYear(), date.getMonth(), 1).getDay(),
-    maxGreenDate = new Date(new Date().setDate(new Date().getDate() + 13)),
+    maxGreenDate = new Date(new Date().setDate(new Date().getDate() + 20)),
     minGreenDate = new Date(date.getFullYear(), date.getMonth(), currentDate),
     totalDaysMonth = new Date(new Date(nextMonth).setDate(0)).getDate(),
     arrayWeekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
