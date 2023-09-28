@@ -134,21 +134,32 @@ export class WaitingForCoupons implements IWaitingForCoupons {
         date = [...date, ...filteringFutureTwo.future];
       }
 
-      date.length = 14;
+      const dateObj = new Date(),
+        currentDate =
+          new Date(
+            dateObj.getUTCFullYear(),
+            dateObj.getUTCMonth(),
+            dateObj.getUTCDate(),
+            dateObj.getUTCHours(),
+            dateObj.getUTCMinutes(),
+            dateObj.getUTCSeconds()
+          ).getTime() +
+          300 * 60 * 1000,
+        byDateFull = new Date(`${byDate}T23:59:59`).getTime();
 
-      const index = date.findIndex((date) => date === byDate);
-
-      if (index < 0) {
+      if (currentDate > byDateFull) {
         await page.close();
         await this.tasksRepository.deleteTask(taskId);
 
-        logger.error(`выбранная дата ${byDate} прошла`);
-        const text = `<span style="color: red; margin: 0">выбранная дата ${byDate} прошла и ожидание талонов окончена</span>`;
+        logger.error(
+          `выбранная дата ${byDate} прошла Доктор: $${doctorName} email: ${email}`
+        );
+        const text = `<span style="color: red; margin: 0">выбранная дата ${byDate} прошла и ожидание талонов ${doctorName} окончена</span>`;
         this.sendMail.sendEmail(email, { text, doctorName, url });
         return;
       }
 
-      date = date.slice(0, index + 1);
+      date.length = new Date(byDateFull - currentDate).getDate();
 
       arrTitle.length = date.length;
 
