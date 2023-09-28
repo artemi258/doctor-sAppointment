@@ -122,25 +122,32 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 				date = [...date, ...filteringFutureTwo.future];
 			}
 
-			date.length = new Date(+new Date(`${byDate}T23:59:59`) - +new Date()).getDate();
+			const dateObj = new Date(),
+				currentDate =
+					new Date(
+						dateObj.getUTCFullYear(),
+						dateObj.getUTCMonth(),
+						dateObj.getUTCDate(),
+						dateObj.getUTCHours(),
+						dateObj.getUTCMinutes(),
+						dateObj.getUTCSeconds()
+					).getTime() +
+					300 * 60 * 1000,
+				byDateFull = new Date(`${byDate}T23:59:59`).getTime();
 
-			const index = date.findIndex((date) => date === byDate);
-			logger.log(index);
-			logger.log(date);
-			if (index < 0) {
+			if (currentDate > byDateFull) {
 				await page.close();
 				await this.tasksRepository.deleteTask(taskId);
 
-				logger.error(`выбранная дата ${byDate} прошла`);
-				const text = `<span style="color: red; margin: 0">выбранная дата ${byDate} прошла и ожидание талонов окончена</span>`;
+				logger.error(`выбранная дата ${byDate} прошла Доктор: $${doctorName} email: ${email}`);
+				const text = `<span style="color: red; margin: 0">выбранная дата ${byDate} прошла и ожидание талонов ${doctorName} окончена</span>`;
 				this.sendMail.sendEmail(email, { text, doctorName, url });
 				return;
 			}
 
-			date = date.slice(0, index + 1);
-			logger.log(date);
+			date.length = new Date(byDateFull - currentDate).getDate();
+
 			arrTitle.length = date.length;
-			logger.log(arrTitle);
 
 			arrTitle.forEach((item) => {
 				const num = +item.slice(-1);
