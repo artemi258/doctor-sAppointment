@@ -9,6 +9,7 @@ export const submittingForm = () => {
     inputEmail = document.querySelector('#email'),
     inputUrl = document.querySelector('#url'),
     checkboxDate = document.querySelector('#byDate'),
+    calendar = document.querySelector('.calendar'),
     button = document.querySelector('.content__button');
 
   const submit = async (e) => {
@@ -80,6 +81,7 @@ export const submittingForm = () => {
           loading.style.display = 'none';
           success.style.display = 'flex';
           form.reset();
+          calendar.style.display = 'none';
           return res.text();
         } else {
           return res.text().then((text) => {
