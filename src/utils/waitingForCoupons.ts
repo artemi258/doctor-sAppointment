@@ -65,19 +65,19 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 				this.sendMail.sendEmail(email, { text, doctorName, url });
 			} else {
 				setTimeout(async () => {
-					await page.reload({ timeout: 45000 }).catch(async (err) => {
+					await page.reload({ timeout: 1000 * 60 * 5 }).catch(async (err) => {
 						logger.error(err);
 						await page.close();
 						await this.tasksRepository.deleteTask(taskId);
-
 						throw new Error('неудолось перезагрузить страницу');
 					});
 					this.getCoupons(page, doctorName, email, url, logger, taskId);
 				}, 1000 * 60);
 			}
 		} catch (error) {
+			logger.error(error);
 			const text =
-				'<span style="color: red; margin: 0">Возникла ошибка при ожидании талона или врач убран из списка</span>';
+				'<span style="color: red; margin: 0">Возникла ошибка при ожидании талона или врач убран из списка, попробуйте создать задачу еще раз.</span>';
 			this.sendMail.sendEmail(email, { text, doctorName, url });
 		}
 	};
@@ -138,7 +138,6 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 			if (currentDate > byDateFull) {
 				await page.close();
 				await this.tasksRepository.deleteTask(taskId);
-
 				logger.error(`выбранная дата ${byDate} прошла Доктор: $${doctorName} email: ${email}`);
 				const text = `<span style="color: red; margin: 0">выбранная дата ${byDate} прошла и ожидание талонов ${doctorName} окончена</span>`;
 				this.sendMail.sendEmail(email, { text, doctorName, url });
@@ -163,18 +162,19 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 				this.sendMail.sendEmail(email, { text, doctorName, url });
 			} else {
 				setTimeout(async () => {
-					await page.reload({ timeout: 45000 }).catch(async (err) => {
+					await page.reload({ timeout: 1000 * 60 * 5 }).catch(async (err) => {
 						logger.error(err);
 						await page.close();
 						await this.tasksRepository.deleteTask(taskId);
-
 						throw new Error('неудолось перезагрузить страницу');
 					});
 					this.getCouponsByDate(page, doctorName, email, url, byDate, logger, taskId);
 				}, 1000 * 60);
 			}
 		} catch (error) {
-			const text = `<span style="color: red; margin: 0">Возникла ошибка при ожидании талона или врач убран из списка</span>`;
+			logger.error(error);
+			const text =
+				'<span style="color: red; margin: 0">Возникла ошибка при ожидании талона или врач убран из списка, попробуйте создать задачу еще раз.</span>';
 			this.sendMail.sendEmail(email, { text, doctorName, url });
 		}
 	};
