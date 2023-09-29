@@ -71,7 +71,7 @@ export class WaitingForCoupons implements IWaitingForCoupons {
         this.sendMail.sendEmail(email, { text, doctorName, url });
       } else {
         setTimeout(async () => {
-          await page.reload({ timeout: 0 }).catch(async (err) => {
+          await page.reload({ timeout: 45000 }).catch(async (err) => {
             logger.error(err);
             await page.close();
             await this.tasksRepository.deleteTask(taskId);
@@ -177,7 +177,7 @@ export class WaitingForCoupons implements IWaitingForCoupons {
         this.sendMail.sendEmail(email, { text, doctorName, url });
       } else {
         setTimeout(async () => {
-          await page.reload({ timeout: 0 }).catch(async (err) => {
+          await page.reload({ timeout: 45000 }).catch(async (err) => {
             logger.error(err);
             await page.close();
             await this.tasksRepository.deleteTask(taskId);
