@@ -40,7 +40,7 @@ export const calendar = () => {
 
   for (let i = 0; i < totalDaysMonth; i++) {
     const backgroundGreen =
-      i + 1 >= currentDate && Date.now() < maxGreenDate
+      i + 1 >= currentDate && new Date(date.getFullYear(), date.getMonth(), i + 1) < maxGreenDate
         ? 'calendar__dates-green'
         : 'calendar__dates-red';
     const activeClass = i + 1 === currentDate ? 'calendar__dates-today' : '';
