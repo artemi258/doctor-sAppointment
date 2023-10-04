@@ -3,3 +3,6 @@
 /.cache
 /.env
 /mongo-data
+./.prettierrc
+./.puppeteerrc.cjs
+./nodemon.json
