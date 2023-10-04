@@ -170,6 +170,7 @@ export class WaitingForCoupons implements IWaitingForCoupons {
         if (num) numberCoupons += num;
       });
 
+      logger.warn(numberCoupons);
       if (numberCoupons) {
         const text = `в период выбранной даты, появился(ось) ${numberCoupons} талон(а/ов)`;
         logger.log(`${text}, Доктор: ${doctorName}`);
