@@ -64,14 +64,16 @@ export class WaitingForCoupons implements IWaitingForCoupons {
       });
 
       if (numberCoupons) {
-        await page.close();
-        await this.tasksRepository.deleteTask(taskId);
         const text = `доступен(но) ${numberCoupons} талон(a/ов)`;
         logger.log(`${text}, Доктор: ${doctorName}`);
         this.sendMail.sendEmail(email, { text, doctorName, url });
+        await page.close();
+        logger.warn(`${doctorName} страница закрыта`);
+        await this.tasksRepository.deleteTask(taskId);
+        logger.warn(`${doctorName} с сервера задача удалена`);
       } else {
         setTimeout(async () => {
-          await page.reload({ timeout: 45000 }).catch(async (err) => {
+          await page.reload({ timeout: 1000 * 60 * 5 }).catch(async (err) => {
             logger.error(err);
             await page.close();
             await this.tasksRepository.deleteTask(taskId);
@@ -169,15 +171,16 @@ export class WaitingForCoupons implements IWaitingForCoupons {
       });
 
       if (numberCoupons) {
-        await page.close();
-        await this.tasksRepository.deleteTask(taskId);
-
         const text = `в период выбранной даты, появился(ось) ${numberCoupons} талон(а/ов)`;
         logger.log(`${text}, Доктор: ${doctorName}`);
         this.sendMail.sendEmail(email, { text, doctorName, url });
+        await page.close();
+        logger.warn(`${doctorName} страница закрыта`);
+        await this.tasksRepository.deleteTask(taskId);
+        logger.warn(`${doctorName} с сервера задача удалена`);
       } else {
         setTimeout(async () => {
-          await page.reload({ timeout: 45000 }).catch(async (err) => {
+          await page.reload({ timeout: 1000 * 60 * 5 }).catch(async (err) => {
             logger.error(err);
             await page.close();
             await this.tasksRepository.deleteTask(taskId);
