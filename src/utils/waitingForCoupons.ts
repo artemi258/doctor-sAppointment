@@ -1,181 +1,206 @@
-import { inject } from 'inversify';
-import { Page } from 'puppeteer';
-import { ILogger } from '../logger/logger.interface';
-import { IWaitingForCoupons } from './waitingForCoupons.interface';
-import { getDates } from '../helpers/getDates';
-import { injectable } from 'inversify';
-import { TYPES } from '../types';
-import { ISendMail } from './sendMail.interface';
-import { ObjectId } from 'mongoose';
-import { ITasksRepository } from '../tasks/tasks.repository.interface';
+import { inject } from "inversify";
+import { Page } from "puppeteer";
+import { ILogger } from "../logger/logger.interface";
+import { IWaitingForCoupons } from "./waitingForCoupons.interface";
+import { getDates } from "../helpers/getDates";
+import { injectable } from "inversify";
+import { TYPES } from "../types";
+import { ISendMail } from "./sendMail.interface";
+import { ObjectId } from "mongoose";
+import { ITasksRepository } from "../tasks/tasks.repository.interface";
 
 @injectable()
 export class WaitingForCoupons implements IWaitingForCoupons {
-	constructor(
-		@inject(TYPES.SendMail) private sendMail: ISendMail,
-		@inject(TYPES.TasksRepository) private tasksRepository: ITasksRepository
-	) {}
+  constructor(
+    @inject(TYPES.SendMail) private sendMail: ISendMail,
+    @inject(TYPES.TasksRepository) private tasksRepository: ITasksRepository
+  ) {}
 
-	getCoupons = async (
-		page: Page,
-		doctorName: string,
-		email: string,
-		url: string,
-		logger: ILogger,
-		taskId: ObjectId
-	): Promise<void> => {
-		try {
-			let numberCoupons: number = 0;
-			let arrTitle: string[] = [];
+  getCoupons = async (
+    page: Page,
+    doctorName: string,
+    email: string,
+    url: string,
+    logger: ILogger,
+    taskId: ObjectId
+  ): Promise<void> => {
+    try {
+      let numberCoupons: number = 0;
+      let arrTitle: string[] = [];
 
-			const title = await page.$$eval('.fc-title', (title) =>
-				title.map((el) => el.textContent ?? '')
-			);
-			const filteringFuture = await page.evaluate(getDates);
+      const title = await page.$$eval(".fc-title", (title) =>
+        title.map((el) => el.textContent ?? "")
+      );
+      const filteringFuture = await page.evaluate(getDates);
 
-			const btnDisabled = await page.evaluate(() => {
-				return !(document.querySelector('.fc-corner-right') as HTMLButtonElement)?.disabled;
-			});
+      const btnDisabled = await page.evaluate(() => {
+        return !(
+          document.querySelector(".fc-corner-right") as HTMLButtonElement
+        )?.disabled;
+      });
 
-			arrTitle = title.filter((el, i) => !filteringFuture.numberingOtherMonth.includes(i));
+      arrTitle = title.filter(
+        (el, i) => !filteringFuture.numberingOtherMonth.includes(i)
+      );
 
-			if (btnDisabled) {
-				const btn = await page.$('.fc-corner-right');
-				if (btn) await btn.click();
-				const filteringFutureTwo = await page.evaluate(getDates);
-				const titleTwo = await page.$$eval('.fc-title', (title) =>
-					title.map((el) => el.textContent ?? '')
-				);
-				arrTitle = [
-					...arrTitle,
-					...titleTwo.filter((el, i) => !filteringFutureTwo.numberingOtherMonth.includes(i)),
-				];
-			}
+      if (btnDisabled) {
+        const btn = await page.$(".fc-corner-right");
+        if (btn) await btn.click();
+        const filteringFutureTwo = await page.evaluate(getDates);
+        const titleTwo = await page.$$eval(".fc-title", (title) =>
+          title.map((el) => el.textContent ?? "")
+        );
+        arrTitle = [
+          ...arrTitle,
+          ...titleTwo.filter(
+            (el, i) => !filteringFutureTwo.numberingOtherMonth.includes(i)
+          ),
+        ];
+      }
 
-			arrTitle.forEach((item) => {
-				const num = +item.slice(-1);
-				if (num) numberCoupons += num;
-			});
+      arrTitle.forEach((item) => {
+        const num = +item.slice(-1);
+        if (num) numberCoupons += num;
+      });
 
-			if (numberCoupons) {
-				await page.close();
-				await this.tasksRepository.deleteTask(taskId);
-				const text = `доступен(но) ${numberCoupons} талон(a/ов)`;
-				logger.log(`${text}, Доктор: ${doctorName}`);
-				this.sendMail.sendEmail(email, { text, doctorName, url });
-			} else {
-				setTimeout(async () => {
-					await page.reload({ timeout: 1000 * 60 * 5 }).catch(async (err) => {
-						logger.error(err);
-						await page.close();
-						await this.tasksRepository.deleteTask(taskId);
-						throw new Error('неудолось перезагрузить страницу');
-					});
-					this.getCoupons(page, doctorName, email, url, logger, taskId);
-				}, 1000 * 60);
-			}
-		} catch (error) {
-			logger.error(error);
-			const text =
-				'<span style="color: red; margin: 0">Возникла ошибка при ожидании талона или врач убран из списка, попробуйте создать задачу еще раз.</span>';
-			this.sendMail.sendEmail(email, { text, doctorName, url });
-		}
-	};
-	getCouponsByDate = async (
-		page: Page,
-		doctorName: string,
-		email: string,
-		url: string,
-		byDate: Date,
-		logger: ILogger,
-		taskId: ObjectId
-	): Promise<void> => {
-		try {
-			let numberCoupons: number = 0;
-			let date: Date[] = [];
-			let arrTitle: string[] = [];
+      if (numberCoupons) {
+        const text = `доступен(но) ${numberCoupons} талон(a/ов)`;
+        logger.log(`${text}, Доктор: ${doctorName}`);
+        this.sendMail.sendEmail(email, { text, doctorName, url });
+        await page.close();
+        logger.warn(`${doctorName} страница закрыта`);
+        await this.tasksRepository.deleteTask(taskId);
+        logger.warn(`${doctorName} с сервера задача удалена`);
+      } else {
+        setTimeout(async () => {
+          await page.reload({ timeout: 1000 * 60 * 5 }).catch(async (err) => {
+            logger.error(err);
+            await page.close();
+            await this.tasksRepository.deleteTask(taskId);
 
-			const title = await page.$$eval('.fc-title', (title) =>
-				title.map((el) => el.textContent ?? '')
-			);
-			const filteringFuture = await page.evaluate(getDates);
+            throw new Error("неудолось перезагрузить страницу");
+          });
+          this.getCoupons(page, doctorName, email, url, logger, taskId);
+        }, 1000 * 60);
+      }
+    } catch (error) {
+      const text =
+        '<span style="color: red; margin: 0">Возникла ошибка при ожидании талона или врач убран из списка</span>';
+      this.sendMail.sendEmail(email, { text, doctorName, url });
+    }
+  };
+  getCouponsByDate = async (
+    page: Page,
+    doctorName: string,
+    email: string,
+    url: string,
+    byDate: Date,
+    logger: ILogger,
+    taskId: ObjectId
+  ): Promise<void> => {
+    try {
+      let numberCoupons: number = 0;
+      let date: Date[] = [];
+      let arrTitle: string[] = [];
 
-			const btnDisabled = await page.evaluate(() => {
-				return !(document.querySelector('.fc-corner-right') as HTMLButtonElement)?.disabled;
-			});
+      const title = await page.$$eval(".fc-title", (title) =>
+        title.map((el) => el.textContent ?? "")
+      );
+      const filteringFuture = await page.evaluate(getDates);
 
-			date = [...filteringFuture.future];
-			arrTitle = title.filter((el, i) => !filteringFuture.numberingOtherMonth.includes(i));
+      const btnDisabled = await page.evaluate(() => {
+        return !(
+          document.querySelector(".fc-corner-right") as HTMLButtonElement
+        )?.disabled;
+      });
 
-			if (btnDisabled) {
-				const btn = await page.$('.fc-corner-right');
-				if (btn) await btn.click();
-				const filteringFutureTwo = await page.evaluate(getDates);
-				const titleTwo = await page.$$eval('.fc-title', (title) =>
-					title.map((el) => el.textContent ?? '')
-				);
-				arrTitle = [
-					...arrTitle,
-					...titleTwo.filter((el, i) => !filteringFutureTwo.numberingOtherMonth.includes(i)),
-				];
+      date = [...filteringFuture.future];
+      arrTitle = title.filter(
+        (el, i) => !filteringFuture.numberingOtherMonth.includes(i)
+      );
 
-				date = [...date, ...filteringFutureTwo.future];
-			}
+      if (btnDisabled) {
+        const btn = await page.$(".fc-corner-right");
+        if (btn) await btn.click();
+        const filteringFutureTwo = await page.evaluate(getDates);
+        const titleTwo = await page.$$eval(".fc-title", (title) =>
+          title.map((el) => el.textContent ?? "")
+        );
+        arrTitle = [
+          ...arrTitle,
+          ...titleTwo.filter(
+            (el, i) => !filteringFutureTwo.numberingOtherMonth.includes(i)
+          ),
+        ];
 
-			const dateObj = new Date(),
-				currentDate =
-					new Date(
-						dateObj.getUTCFullYear(),
-						dateObj.getUTCMonth(),
-						dateObj.getUTCDate(),
-						dateObj.getUTCHours(),
-						dateObj.getUTCMinutes(),
-						dateObj.getUTCSeconds()
-					).getTime() +
-					300 * 60 * 1000,
-				byDateFull = new Date(`${byDate}T23:59:59`).getTime();
+        date = [...date, ...filteringFutureTwo.future];
+      }
 
-			if (currentDate > byDateFull) {
-				await page.close();
-				await this.tasksRepository.deleteTask(taskId);
-				logger.error(`выбранная дата ${byDate} прошла Доктор: $${doctorName} email: ${email}`);
-				const text = `<span style="color: red; margin: 0">выбранная дата ${byDate} прошла и ожидание талонов ${doctorName} окончена</span>`;
-				this.sendMail.sendEmail(email, { text, doctorName, url });
-				return;
-			}
+      const dateObj = new Date(),
+        currentDate =
+          new Date(
+            dateObj.getUTCFullYear(),
+            dateObj.getUTCMonth(),
+            dateObj.getUTCDate(),
+            dateObj.getUTCHours(),
+            dateObj.getUTCMinutes(),
+            dateObj.getUTCSeconds()
+          ).getTime() +
+          300 * 60 * 1000,
+        byDateFull = new Date(`${byDate}T23:59:59`).getTime();
 
-			date.length = new Date(byDateFull - currentDate).getDate();
+      if (currentDate > byDateFull) {
+        await page.close();
+        await this.tasksRepository.deleteTask(taskId);
 
-			arrTitle.length = date.length;
+        logger.error(
+          `выбранная дата ${byDate} прошла Доктор: $${doctorName} email: ${email}`
+        );
+        const text = `<span style="color: red; margin: 0">выбранная дата ${byDate} прошла и ожидание талонов ${doctorName} окончена</span>`;
+        this.sendMail.sendEmail(email, { text, doctorName, url });
+        return;
+      }
 
-			arrTitle.forEach((item) => {
-				const num = +item.slice(-1);
-				if (num) numberCoupons += num;
-			});
+      date.length = new Date(byDateFull - currentDate).getDate();
 
-			if (numberCoupons) {
-				await page.close();
-				await this.tasksRepository.deleteTask(taskId);
+      arrTitle.length = date.length;
 
-				const text = `в период выбранной даты, появился(ось) ${numberCoupons} талон(а/ов)`;
-				logger.log(`${text}, Доктор: ${doctorName}`);
-				this.sendMail.sendEmail(email, { text, doctorName, url });
-			} else {
-				setTimeout(async () => {
-					await page.reload({ timeout: 1000 * 60 * 5 }).catch(async (err) => {
-						logger.error(err);
-						await page.close();
-						await this.tasksRepository.deleteTask(taskId);
-						throw new Error('неудолось перезагрузить страницу');
-					});
-					this.getCouponsByDate(page, doctorName, email, url, byDate, logger, taskId);
-				}, 1000 * 60);
-			}
-		} catch (error) {
-			logger.error(error);
-			const text =
-				'<span style="color: red; margin: 0">Возникла ошибка при ожидании талона или врач убран из списка, попробуйте создать задачу еще раз.</span>';
-			this.sendMail.sendEmail(email, { text, doctorName, url });
-		}
-	};
+      arrTitle.forEach((item) => {
+        const num = +item.slice(-1);
+        if (num) numberCoupons += num;
+      });
+
+      if (numberCoupons) {
+        const text = `в период выбранной даты, появился(ось) ${numberCoupons} талон(а/ов)`;
+        logger.log(`${text}, Доктор: ${doctorName}`);
+        this.sendMail.sendEmail(email, { text, doctorName, url });
+        await page.close();
+        logger.warn(`${doctorName} страница закрыта`);
+        await this.tasksRepository.deleteTask(taskId);
+        logger.warn(`${doctorName} с сервера задача удалена`);
+      } else {
+        setTimeout(async () => {
+          await page.reload({ timeout: 1000 * 60 * 5 }).catch(async (err) => {
+            logger.error(err);
+            await page.close();
+            await this.tasksRepository.deleteTask(taskId);
+
+            throw new Error("неудолось перезагрузить страницу");
+          });
+          this.getCouponsByDate(
+            page,
+            doctorName,
+            email,
+            url,
+            byDate,
+            logger,
+            taskId
+          );
+        }, 1000 * 60);
+      }
+    } catch (error) {
+      const text = `<span style="color: red; margin: 0">Возникла ошибка при ожидании талона или врач убран из списка</span>`;
+      this.sendMail.sendEmail(email, { text, doctorName, url });
+    }
+  };
 }
