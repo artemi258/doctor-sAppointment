@@ -1,110 +1,114 @@
 .calendar {
-  display: none;
-  width: 100%;
+ display: none;
+ width: 100%;
+ justify-content: center;
+ align-items: center;
+ background: #fff;
+ padding: 20px;
+ border-radius: 5px;
+ box-shadow: 0px 10px 25px -15px rgba(0, 0, 0, 0.5);
+ &__desc {
+  font-size: 18px;
+  span {
+   color: #4676d7;
+  }
+ }
+ &__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+  margin-bottom: 20px;
+  font-weight: 300;
+ }
+ &__month {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 300;
+
+  &-year {
+   font-weight: 600;
+   margin-left: 10px;
+  }
+ }
+ &__nav {
+  cursor: pointer;
+  outline: 0;
+  border: 0;
+  background-color: #fff;
+  display: flex;
   justify-content: center;
   align-items: center;
-  background: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0px 40px 30px -20px rgba(0, 0, 0, 0.5);
-  &__desc {
-    font-size: 18px;
-    span {
-      color: #4676d7;
-    }
-  }
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 20px;
-    margin-bottom: 20px;
-    font-weight: 300;
-  }
-  &__month {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 20px;
-    font-weight: 300;
+  text-decoration: none;
+  color: #0a3d62;
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
+  transition-duration: 0.2s;
+  position: relative;
 
-    &-year {
-      font-weight: 600;
-      margin-left: 10px;
-    }
+  &:hover {
+   background: #eee;
   }
-  &__nav {
-    cursor: pointer;
-    outline: 0;
-    border: 0;
-    background-color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
-    color: #0a3d62;
-    width: 40px;
-    height: 40px;
-    border-radius: 40px;
-    transition-duration: 0.2s;
-    position: relative;
+ }
 
-    &:hover {
-      background: #eee;
-    }
+ &__days {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  grid-template-columns: repeat(7, 1fr);
+  color: #999;
+  font-weight: 600;
+  margin-bottom: 15px;
+
+  span {
+   width: 50px;
+   justify-self: center;
+   align-self: center;
+   text-align: center;
+  }
+ }
+
+ &__dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+
+  &-active {
+   background-color: #0a3d62 !important;
+   color: #fff;
+   font-weight: 600;
   }
 
-  &__days {
-    display: grid;
-    justify-content: center;
-    align-items: center;
-    grid-template-columns: repeat(7, 1fr);
-    color: #999;
-    font-weight: 600;
-    margin-bottom: 15px;
-
-    span {
-      width: 50px;
-      justify-self: center;
-      align-self: center;
-      text-align: center;
-    }
+  &-today {
+   box-shadow: inset 0px 0px 0px 3px #0a3d62;
   }
-
-  &__dates {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-
-    &-active {
-      background-color: #0a3d62 !important;
-      color: #fff;
-      font-weight: 600;
-    }
-
-    &-today {
-      box-shadow: inset 0px 0px 0px 3px #0a3d62;
-    }
-    &-green {
-      background-color: rgba(0, 255, 77, 0.5);
-      opacity: 0.8;
-    }
-    &-red {
-      background-color: rgba(255, 28, 51, 0.5);
-      opacity: 0.8;
-    }
-    button {
-      cursor: pointer;
-      outline: 0;
-      border: 0;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 16px;
-      justify-self: center;
-      align-self: center;
-      width: 50px;
-      height: 50px;
-      border-radius: 50px;
-      margin: 2px;
-      transition-duration: 0.2s;
-    }
+  &-green {
+   background-color: rgba(0, 255, 77, 0.5);
+   opacity: 0.8;
+   transition: all 0.3s linear;
+   cursor: pointer;
+   &:hover {
+    background-color: rgba(10, 61, 98, 0.5);
+   }
   }
+  &-red {
+   background-color: rgba(255, 28, 51, 0.5);
+   opacity: 0.8;
+  }
+  button {
+   outline: 0;
+   border: 0;
+   font-family: 'Montserrat', sans-serif;
+   font-size: 16px;
+   justify-self: center;
+   align-self: center;
+   width: 50px;
+   height: 50px;
+   border-radius: 50px;
+   margin: 2px;
+   transition-duration: 0.2s;
+  }
+ }
 }
