@@ -61,6 +61,7 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 				const num = +item.slice(-2);
 				if (num) numberCoupons += num;
 			});
+			logger.log(`email: ${email} врач: ${doctorName} талонов: ${numberCoupons}`);
 			if (numberCoupons) {
 				const text = `доступен(но) ${numberCoupons} талон(a/ов)`;
 				logger.log(`${text}, Доктор: ${doctorName}`);
@@ -78,6 +79,9 @@ export class WaitingForCoupons implements IWaitingForCoupons {
 
 						throw new Error('неудолось перезагрузить страницу');
 					});
+					logger.log(
+						`перезагрузка страницы email: ${email} врач: ${doctorName} талонов: ${numberCoupons}`
+					);
 					this.getCoupons(page, doctorName, email, url, logger, taskId);
 				}, 1000 * 60);
 			}

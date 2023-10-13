@@ -15,10 +15,12 @@ export const getDates = (): IGetDates => {
 			if (el.classList.contains('fc-other-month')) {
 				numberingOtherMonth.push(i);
 			}
-			return !el.classList.contains('fc-other-month') && !el.classList.contains('fc-past');
+			return (
+				!el.classList.contains('fc-other-month') && !el.classList.contains('fc-past')
+			);
 		})
 		.map((el) => el.getAttribute('data-date') ?? '') as unknown as Date[];
-
+	console.log(`получил даты`);
 	return {
 		future: dates,
 		numberingOtherMonth,
