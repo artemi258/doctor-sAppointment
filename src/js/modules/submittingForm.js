@@ -64,12 +64,7 @@ export const submittingForm = () => {
    setTimeout(() => {
     loadingMessage.textContent = 'почти добежал...';
    }, 6000);
-   setTimeout(() => {
-    rej({
-     message:
-      'вышло время подключения к серверу, на данный момент сервер не доступен, попробуйте в другой раз',
-    });
-   }, 20000);
+
    fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -103,7 +98,7 @@ export const submittingForm = () => {
     inputUrl.style.border = '1px #4676d7 solid';
     inputUrl.style.boxShadow = 'none';
     button.disabled = '';
-    dateActive.classList.remove('calendar__dates-active');
+    dateActive && dateActive.classList.remove('calendar__dates-active');
     setTimeout(() => {
      error.style.display = 'none';
      success.style.display = 'none';
